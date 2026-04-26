@@ -25,9 +25,9 @@ export function ipcWebContentsSend<Key extends keyof EventPayloadMapping>(
 }
 
 export function validateEventFrame(frame: WebFrameMain | null) {
-    if (!frame) {
-        throw new Error('Unverified frame (null). Event rejected.')
-    }
+	if (!frame) {
+		throw new Error('Unverified frame (null). Event rejected.')
+	}
 
 	if (isDev() && new URL(frame.url).host === 'localhost:5123') {
 		return

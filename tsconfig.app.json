@@ -19,9 +19,8 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"erasableSyntaxOnly": true,
-		"noFallthroughCasesInSwitch": true,
-
+		"noFallthroughCasesInSwitch": true
 	},
 	"include": ["src"],
-    "exclude": ["src/electron"]
+	"exclude": ["src/electron"]
 }
