@@ -1,5 +1,11 @@
 {
 	"name": "jebs-progress-log",
+	"author": {
+		"name": "Riccardo Mariotti",
+		"email": "riccardo.mariotti98@gmail.com",
+		"url": "https://github.com/Riki9811"
+	},
+	"description": "A desktop application designed to help you track and visualize your scientific experiments in Kerbal Space Program.",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",

@@ -6,15 +6,20 @@ import './App.css'
 
 function App() {
 	const [count, setCount] = useState(0)
+	const [a, setA] = useState('')
+	const [b, setB] = useState<string[]>([])
+	const [err, setErr] = useState('')
 
 	useEffect(() => {
 		async function fetchData() {
 			const folderData = await window.electron.getFoldersData()
-			console.log(folderData)
+			if (typeof folderData === 'string') setErr(folderData)
+			else setB(folderData)
 		}
+
 		fetchData()
 
-		const unsub = window.electron.subscribeTestEvent((data) => console.log(data))
+		const unsub = window.electron.subscribeTestEvent((data) => setA(data))
 
 		return unsub
 	}, [])
@@ -33,6 +38,13 @@ function App() {
 						Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
 					</p>
 				</div>
+				<div>
+					<p>Test: {a}</p>
+					{err && <p style={{color: "red", fontWeight: "bold"}}>ReadError: {err}</p>}
+					{b.map((str, i) => (
+						<p key={`folder-${i}`}>{str}</p>
+					))}
+				</div>
 				<button type="button" className="counter" onClick={() => setCount((count) => count + 1)}>
 					Count is {count}
 				</button>
@@ -42,9 +54,6 @@ function App() {
 
 			<section id="next-steps">
 				<div id="docs">
-					<svg className="icon" role="presentation" aria-hidden="true">
-						<use href="/icons.svg#documentation-icon"></use>
-					</svg>
 					<h2>Documentation</h2>
 					<p>Your questions, answered</p>
 					<ul>
@@ -63,41 +72,26 @@ function App() {
 					</ul>
 				</div>
 				<div id="social">
-					<svg className="icon" role="presentation" aria-hidden="true">
-						<use href="/icons.svg#social-icon"></use>
-					</svg>
 					<h2>Connect with us</h2>
 					<p>Join the Vite community</p>
 					<ul>
 						<li>
 							<a href="https://github.com/vitejs/vite" target="_blank">
-								<svg className="button-icon" role="presentation" aria-hidden="true">
-									<use href="/icons.svg#github-icon"></use>
-								</svg>
 								GitHub
 							</a>
 						</li>
 						<li>
 							<a href="https://chat.vite.dev/" target="_blank">
-								<svg className="button-icon" role="presentation" aria-hidden="true">
-									<use href="/icons.svg#discord-icon"></use>
-								</svg>
 								Discord
 							</a>
 						</li>
 						<li>
 							<a href="https://x.com/vite_js" target="_blank">
-								<svg className="button-icon" role="presentation" aria-hidden="true">
-									<use href="/icons.svg#x-icon"></use>
-								</svg>
 								X.com
 							</a>
 						</li>
 						<li>
 							<a href="https://bsky.app/profile/vite.dev" target="_blank">
-								<svg className="button-icon" role="presentation" aria-hidden="true">
-									<use href="/icons.svg#bluesky-icon"></use>
-								</svg>
 								Bluesky
 							</a>
 						</li>

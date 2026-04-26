@@ -38,6 +38,6 @@ export function getFolders(): FolderReadResponse {
 
 export function testEvent(mainWindow: BrowserWindow) {
 	setInterval(() => {
-		ipcWebContentsSend('test', mainWindow.webContents, 'This is a test string')
+		ipcWebContentsSend('test', mainWindow.webContents, `[${Date.now()}] This is a test string`)
 	}, 1000)
 }
