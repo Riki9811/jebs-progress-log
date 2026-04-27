@@ -9,31 +9,33 @@ const KSP_INSTALL_DIR: string = path.normalize(
 
 const UNWANTED_FOLDERS = ['training', 'scenarios', 'missions']
 
-export function getFolders(): FolderReadResponse {
+export function getFolders(): Result<string[], FolderReadError> {
 	const savesPath: string = path.join(KSP_INSTALL_DIR, 'saves')
 
 	// 1. Check path is vaild and exists
-	if (!fs.existsSync(savesPath)) return 'NOT_EXISTS'
+	if (!fs.existsSync(savesPath)) return { ok: false, error: 'NOT_EXISTS' }
 
 	// 2. Check path is folder
 	const stats: fs.Stats = fs.statSync(savesPath)
-	if (!stats.isDirectory()) return 'NOT_FOLDER'
+	if (!stats.isDirectory()) return { ok: false, error: 'NOT_FOLDER' }
 
 	// 3. Check read permission on folder
 	try {
 		fs.accessSync(savesPath, fs.constants.R_OK)
 	} catch {
-		return 'CANNOT_READ'
+		return { ok: false, error: 'CANNOT_READ' }
 	}
 
 	// Read contents of saves folder and return array of sub-folders found
 	const items: Dirent<string>[] = fs.readdirSync(savesPath, { withFileTypes: true })
 
-	return items
+	const folders = items
 		.filter(
 			(item: Dirent<string>): boolean => item.isDirectory() && !UNWANTED_FOLDERS.includes(item.name)
 		)
 		.map((item: Dirent<string>): string => path.join(item.parentPath, item.name))
+
+	return { ok: true, value: folders }
 }
 
 export function testEvent(mainWindow: BrowserWindow) {

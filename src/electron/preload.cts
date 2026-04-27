@@ -5,16 +5,19 @@ electron.contextBridge.exposeInMainWorld('electron', {
 		ipcOn('test', (stats) => {
 			callback(stats)
 		}),
-	getFoldersData: () => ipcInvoke('getFoldersData')
+	getFoldersData: () => ipcInvoke('getFoldersData', undefined)
 } satisfies Window['electron'])
 
-function ipcInvoke<Key extends keyof EventPayloadMapping>(key: Key): Promise<EventPayloadMapping[Key]> {
-	return electron.ipcRenderer.invoke(key)
+function ipcInvoke<Key extends keyof IpcInvokeMapping>(
+	key: Key,
+	args: IpcInvokeMapping[Key]['args']
+): Promise<IpcInvokeMapping[Key]['result']> {
+	return electron.ipcRenderer.invoke(key, args)
 }
 
-function ipcOn<Key extends keyof EventPayloadMapping>(
+function ipcOn<Key extends keyof IpcEventMapping>(
 	key: Key,
-	callback: (payload: EventPayloadMapping[Key]) => void
+	callback: (payload: IpcEventMapping[Key]) => void
 ) {
 	const cb = (_: Electron.IpcRendererEvent, payload: any) => callback(payload)
 	electron.ipcRenderer.on(key, cb)

@@ -6,20 +6,22 @@ export function isDev(): boolean {
 	return process.env.NODE_ENV === 'dev'
 }
 
-export function ipcMainHandle<Key extends keyof EventPayloadMapping>(
+export function ipcMainHandle<Key extends keyof IpcInvokeMapping>(
 	key: Key,
-	handler: () => EventPayloadMapping[Key]
+	handler: (
+		args: IpcInvokeMapping[Key]['args']
+	) => Promise<IpcInvokeMapping[Key]['result']> | IpcInvokeMapping[Key]['result']
 ) {
-	ipcMain.handle(key, (event) => {
+	ipcMain.handle(key, async (event, args: IpcInvokeMapping[Key]['args']) => {
 		validateEventFrame(event.senderFrame)
-		return handler()
+		return await handler(args)
 	})
 }
 
-export function ipcWebContentsSend<Key extends keyof EventPayloadMapping>(
+export function ipcWebContentsSend<Key extends keyof IpcEventMapping>(
 	key: Key,
 	webContents: WebContents,
-	payload: EventPayloadMapping[Key]
+	payload: IpcEventMapping[Key]
 ) {
 	webContents.send(key, payload)
 }

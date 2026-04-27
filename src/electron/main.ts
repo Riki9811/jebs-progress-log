@@ -7,7 +7,10 @@ app.on('ready', () => {
 	const mainWindow = new BrowserWindow({
 		webPreferences: {
 			preload: getPreloadPath(),
-			devTools: isDev()
+			devTools: isDev(),
+			contextIsolation: true,
+			nodeIntegration: false,
+			sandbox: true
 		},
 		width: 1280,
 		height: 720

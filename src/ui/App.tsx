@@ -13,8 +13,8 @@ function App() {
 	useEffect(() => {
 		async function fetchData() {
 			const folderData = await window.electron.getFoldersData()
-			if (typeof folderData === 'string') setErr(folderData)
-			else setB(folderData)
+			if (!folderData.ok) setErr(folderData.error)
+			else setB(folderData.value)
 		}
 
 		fetchData()

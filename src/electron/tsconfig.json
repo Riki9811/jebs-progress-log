@@ -5,6 +5,7 @@
 		"module": "nodenext",
 		"outDir": "../../dist-electron",
 		"skipLibCheck": true,
+		"resolveJsonModule": true,
 		"types": ["../../types"]
 	}
 }
