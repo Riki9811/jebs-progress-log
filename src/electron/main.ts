@@ -1,7 +1,8 @@
 import { app, BrowserWindow } from 'electron'
 import { ipcMainHandle, isDev } from './util.js'
 import { getPreloadPath, getUIPath } from './pathResolver.js'
-import { getFolders, testEvent } from './savesManager.js'
+import { getFolders, listSavesInFolder, parseFullSave } from './savesManager.js'
+import { getReferenceData } from './reference/index.js'
 
 app.on('ready', () => {
 	const mainWindow = new BrowserWindow({
@@ -23,9 +24,8 @@ app.on('ready', () => {
 		mainWindow.loadFile(getUIPath())
 	}
 
-	testEvent(mainWindow)
-
-	ipcMainHandle('getFoldersData', () => {
-		return getFolders()
-	})
+	ipcMainHandle('getFoldersData', () => getFolders())
+	ipcMainHandle('getReferenceData', () => ({ ok: true, value: getReferenceData() }))
+	ipcMainHandle('listSavesInFolder', (folderPath) => listSavesInFolder(folderPath))
+	ipcMainHandle('parseFullSave', (savePath) => parseFullSave(savePath))
 })

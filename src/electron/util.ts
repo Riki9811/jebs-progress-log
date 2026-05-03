@@ -1,6 +1,7 @@
-import { ipcMain, WebContents, WebFrameMain } from 'electron'
+import { ipcMain, WebFrameMain } from 'electron'
 import { pathToFileURL } from 'url'
 import { getUIPath } from './pathResolver.js'
+import { err } from './result.js'
 
 export function isDev(): boolean {
 	return process.env.NODE_ENV === 'dev'
@@ -13,17 +14,13 @@ export function ipcMainHandle<Key extends keyof IpcInvokeMapping>(
 	) => Promise<IpcInvokeMapping[Key]['result']> | IpcInvokeMapping[Key]['result']
 ) {
 	ipcMain.handle(key, async (event, args: IpcInvokeMapping[Key]['args']) => {
-		validateEventFrame(event.senderFrame)
+		try {
+			validateEventFrame(event.senderFrame)
+		} catch {
+			return err({ type: 'EVENT_FRAME_ERROR' as const }) as IpcInvokeMapping[Key]['result']
+		}
 		return await handler(args)
 	})
-}
-
-export function ipcWebContentsSend<Key extends keyof IpcEventMapping>(
-	key: Key,
-	webContents: WebContents,
-	payload: IpcEventMapping[Key]
-) {
-	webContents.send(key, payload)
 }
 
 export function validateEventFrame(frame: WebFrameMain | null) {
