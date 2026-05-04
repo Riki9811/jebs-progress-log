@@ -25,19 +25,31 @@ export const ACTIVITIES: readonly Activity[] = deepFreeze([
 
 // I 4 esperimenti del DLC Breaking Ground. Pattern dell'id identico alle activities standard.
 export const DEPLOYED_EXPERIMENTS: readonly DeployedExperiment[] = deepFreeze([
-	{ name: 'deployedGooObservation', displayName: 'Goo Observation', requiresAtmosphere: false, requiresVacuum: false },
-	{ name: 'deployedIONCollector', displayName: 'ION Collector', requiresAtmosphere: false, requiresVacuum: true },
-	{ name: 'deployedSeismicSensor', displayName: 'Seismic Sensor', requiresAtmosphere: false, requiresVacuum: false },
-	{ name: 'deployedWeatherReport', displayName: 'Weather Report', requiresAtmosphere: true, requiresVacuum: false }
+	{
+		name: 'deployedGooObservation',
+		displayName: 'Goo Observation',
+		requiresAtmosphere: false,
+		requiresVacuum: false
+	},
+	{
+		name: 'deployedIONCollector',
+		displayName: 'ION Collector',
+		requiresAtmosphere: false,
+		requiresVacuum: true
+	},
+	{
+		name: 'deployedSeismicSensor',
+		displayName: 'Seismic Sensor',
+		requiresAtmosphere: false,
+		requiresVacuum: false
+	},
+	{
+		name: 'deployedWeatherReport',
+		displayName: 'Weather Report',
+		requiresAtmosphere: true,
+		requiresVacuum: false
+	}
 ])
 
 export const ACTIVITY_NAMES: readonly string[] = ACTIVITIES.map((a) => a.name)
 export const DEPLOYED_EXPERIMENT_NAMES: readonly string[] = DEPLOYED_EXPERIMENTS.map((d) => d.name)
-
-export function findActivity(name: string): Activity | undefined {
-	return ACTIVITIES.find((a) => a.name === name)
-}
-
-export function findDeployedExperiment(name: string): DeployedExperiment | undefined {
-	return DEPLOYED_EXPERIMENTS.find((d) => d.name === name)
-}

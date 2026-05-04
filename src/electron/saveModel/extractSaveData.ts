@@ -1,16 +1,11 @@
 import path from 'path'
-import { parseSfs, type SfsBlock, type SfsValue } from '../parser/sfsParser.js'
+import { parseSfs, type SfsBlock } from '../parser/sfsParser.js'
 import { parseScienceId } from '../parser/scienceIdParser.js'
+import { isBlock, asArray, stringField, numberField } from '../parser/sfsHelpers.js'
+import { buildAggregations } from './aggregateScience.js'
 import { ok, err } from '../result.js'
-import { RECOVERY_SITUATIONS } from '../reference/situations.js'
-import { DEPLOYED_EXPERIMENT_NAMES } from '../reference/experiments.js'
 
-export type ExtractFailure =
-	| { type: 'PARSE'; line: number; reason: string }
-	| { type: 'NO_GAME_BLOCK' }
-
-const RECOVERY_SET = new Set<string>(RECOVERY_SITUATIONS)
-const DEPLOYED_SET = new Set<string>(DEPLOYED_EXPERIMENT_NAMES)
+export type ExtractFailure = { type: 'PARSE'; line: number; reason: string } | { type: 'NO_GAME_BLOCK' }
 
 export function extractSaveData(input: string, filePath: string): Result<SaveData, ExtractFailure> {
 	const parsed = parseSfs(input)
@@ -78,84 +73,6 @@ function extractScienceRecord(block: SfsBlock): ScienceRecord | null {
 		collected: numberField(block.sci, 0),
 		total: numberField(block.cap, 0)
 	}
-}
-
-function buildAggregations(records: ScienceRecord[]): SaveAggregations {
-	const perBody: Record<string, BodyStats> = {}
-	let total = 0
-
-	for (const record of records) {
-		total += record.collected
-
-		const body = (perBody[record.body] ??= {
-			body: record.body,
-			scienceCollected: 0,
-			experimentCount: 0,
-			perSituation: {},
-			deployedPerSituation: {},
-			recoveries: {}
-		})
-		body.scienceCollected += record.collected
-		body.experimentCount += 1
-
-		if (RECOVERY_SET.has(record.situation)) {
-			const sit = record.situation as RecoverySituation
-			const rec = (body.recoveries[sit] ??= {
-				recovery: sit,
-				scienceCollected: 0,
-				perExperiment: {}
-			})
-			rec.scienceCollected += record.collected
-			rec.perExperiment[record.experimentId] = record
-		} else {
-			// per esclusione: situation è StandardSituation
-			const sit = record.situation as StandardSituation
-			const target = DEPLOYED_SET.has(record.experimentId)
-				? body.deployedPerSituation
-				: body.perSituation
-			const sitStats = (target[sit] ??= {
-				situation: sit,
-				scienceCollected: 0,
-				recordCount: 0,
-				biomes: {},
-				global: {}
-			})
-			sitStats.scienceCollected += record.collected
-			sitStats.recordCount += 1
-			if (record.biome) {
-				const b = (sitStats.biomes[record.biome] ??= {
-					biome: record.biome,
-					perExperiment: {}
-				})
-				b.perExperiment[record.experimentId] = record
-			} else {
-				sitStats.global[record.experimentId] = record
-			}
-		}
-	}
-
-	return { perBody, totalScienceCollected: total }
-}
-
-// === helpers ===
-
-function isBlock(v: SfsValue | SfsValue[] | undefined): v is SfsBlock {
-	return typeof v === 'object' && v !== null && !Array.isArray(v)
-}
-
-function asArray(v: SfsValue | SfsValue[] | undefined): SfsValue[] {
-	if (v === undefined) return []
-	return Array.isArray(v) ? v : [v]
-}
-
-function stringField(v: SfsValue | SfsValue[] | undefined): string | null {
-	return typeof v === 'string' ? v : null
-}
-
-function numberField(v: SfsValue | SfsValue[] | undefined, fallback: number): number {
-	if (typeof v !== 'string') return fallback
-	const n = parseFloat(v)
-	return Number.isFinite(n) ? n : fallback
 }
 
 function isGameMode(s: string): s is GameMode {

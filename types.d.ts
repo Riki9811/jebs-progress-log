@@ -3,17 +3,20 @@
 // senza trasformare questo file in un module.
 type Result<T, E> = import('./src/electron/result.js').Result<T, E>
 
-type FolderReadError =
-	| { type: 'NOT_EXISTS' }
-	| { type: 'NOT_FOLDER' }
-	| { type: 'CANNOT_READ' }
-	| { type: 'EVENT_FRAME_ERROR' }
+// === IPC errors ===
+
+// Sollevato dal wrapper `ipcMainHandle` quando il frame del sender non corrisponde
+// alla finestra fidata. Si aggiunge AUTOMATICAMENTE alla union di errori di ogni
+// endpoint via `WithFrameError`, quindi i singoli error type qui sotto NON lo
+// includono.
+type EventFrameError = { type: 'EVENT_FRAME_ERROR' }
+
+type FolderReadError = { type: 'NOT_EXISTS' } | { type: 'NOT_FOLDER' } | { type: 'CANNOT_READ' }
 
 type ParseError =
 	| { type: 'FILE_NOT_FOUND' }
 	| { type: 'INVALID_FORMAT'; line: number; reason: string }
 	| { type: 'IO_ERROR'; reason: string }
-	| { type: 'EVENT_FRAME_ERROR' }
 
 // === Save / science domain types ===
 
@@ -154,31 +157,26 @@ type ListSavesResult = {
 	errors: { fileName: string; error: ParseError }[]
 }
 
-interface Window {
-	electron: {
-		getFoldersData: () => Promise<Result<string[], FolderReadError>>
-		getReferenceData: () => Promise<Result<ReferenceData, { type: 'EVENT_FRAME_ERROR' }>>
-		listSavesInFolder: (folderName: string) => Promise<Result<ListSavesResult, FolderReadError>>
-		parseFullSave: (savePath: string) => Promise<Result<SaveData, ParseError>>
-	}
+// === IPC contract: single source of truth ===
+// `IpcInvokeMapping` definisce gli endpoint dal punto di vista del main (errori di dominio).
+// `IpcRendererApi` (esposto su `window.electron`) viene derivato aggiungendo
+// `EventFrameError` alla union di errori di ogni endpoint.
+
+type IpcInvokeMapping = {
+	getFoldersData: { args: void; result: Result<string[], FolderReadError> }
+	getReferenceData: { args: void; result: Result<ReferenceData, never> }
+	listSavesInFolder: { args: string; result: Result<ListSavesResult, FolderReadError> }
+	parseFullSave: { args: string; result: Result<SaveData, ParseError> }
 }
 
-// Renderer → Main (ipcMain.handle / ipcRenderer.invoke)
-type IpcInvokeMapping = {
-	getFoldersData: {
-		args: void
-		result: Result<string[], FolderReadError>
-	}
-	getReferenceData: {
-		args: void
-		result: Result<ReferenceData, { type: 'EVENT_FRAME_ERROR' }>
-	}
-	listSavesInFolder: {
-		args: string
-		result: Result<ListSavesResult, FolderReadError>
-	}
-	parseFullSave: {
-		args: string
-		result: Result<SaveData, ParseError>
-	}
+type WithFrameError<R> = R extends Result<infer V, infer E> ? Result<V, E | EventFrameError> : R
+
+type IpcRendererApi = {
+	[K in keyof IpcInvokeMapping]: IpcInvokeMapping[K]['args'] extends void
+		? () => Promise<WithFrameError<IpcInvokeMapping[K]['result']>>
+		: (args: IpcInvokeMapping[K]['args']) => Promise<WithFrameError<IpcInvokeMapping[K]['result']>>
+}
+
+interface Window {
+	electron: IpcRendererApi
 }

@@ -25,7 +25,7 @@ app.on('ready', () => {
 	}
 
 	ipcMainHandle('getFoldersData', () => getFolders())
-	ipcMainHandle('getReferenceData', () => ({ ok: true, value: getReferenceData() }))
+	ipcMainHandle('getReferenceData', () => getReferenceData())
 	ipcMainHandle('listSavesInFolder', (folderPath) => listSavesInFolder(folderPath))
 	ipcMainHandle('parseFullSave', (savePath) => parseFullSave(savePath))
 })

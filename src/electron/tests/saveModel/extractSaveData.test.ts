@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { extractSaveData } from './extractSaveData.js'
+import { extractSaveData } from '../../saveModel/extractSaveData.js'
 
 const SAVE_PATH = '/tmp/Riccardo/persistent.sfs'
 
@@ -181,7 +181,9 @@ describe('extractSaveData', () => {
 
 		// deployed experiment → deployedPerSituation (su Mun)
 		const mun = r.value.aggregations.perBody.Mun
-		expect(mun?.deployedPerSituation.SrfLanded?.biomes.Highlands?.perExperiment.deployedSeismicSensor).toBeDefined()
+		expect(
+			mun?.deployedPerSituation.SrfLanded?.biomes.Highlands?.perExperiment.deployedSeismicSensor
+		).toBeDefined()
 		// e NON deve apparire nel canale standard
 		expect(mun?.perSituation.SrfLanded).toBeUndefined()
 	})

@@ -1,6 +1,8 @@
 import { deepFreeze } from '../freeze.js'
 
 // Le 6 situazioni "in flight" che pilotano la matrice activityTypes nelle tabelle UI.
+// La fonte di verità per i displayName delle recovery situation è il campo `displayName`
+// dentro `body.recovery` di ogni body in `celestialBodies.ts`.
 export const STANDARD_SITUATIONS = [
 	'SrfLanded',
 	'SrfSplashed',
@@ -25,14 +27,6 @@ export const ALL_SITUATIONS = [
 	...STANDARD_SITUATIONS,
 	...RECOVERY_SITUATIONS
 ] as const satisfies readonly Situation[]
-
-export const RECOVERY_DISPLAY_NAMES: Readonly<Record<RecoverySituation, string>> = deepFreeze({
-	Flew: 'Flight',
-	SubOrbited: 'Sub-orbit',
-	Orbited: 'Orbit',
-	FlewBy: 'Fly-by',
-	Surfaced: 'Landed'
-})
 
 // Definizione ricca delle 6 situazioni standard: include il displayName e la matrice
 // activityTypes (per ogni Activity dice se in questa situation produce record per-biome,

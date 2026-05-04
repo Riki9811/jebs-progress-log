@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { tokenize } from './sfsTokenizer.js'
-import { parseSfs } from './sfsParser.js'
+import { tokenize } from '../../parser/sfsTokenizer.js'
+import { parseSfs } from '../../parser/sfsParser.js'
 
 describe('tokenizer', () => {
 	it('skips empty lines and comments', () => {

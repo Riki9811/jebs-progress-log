@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseScienceId } from './scienceIdParser.js'
+import { parseScienceId } from '../../parser/scienceIdParser.js'
 
 describe('parseScienceId', () => {
 	it('parses experiment + body + standard situation + biome', () => {

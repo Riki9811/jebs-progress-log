@@ -1,21 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { CELESTIAL_BODIES, BODY_NAMES, findBody, prettyBiomeName } from './celestialBodies.js'
+import { CELESTIAL_BODIES, BODY_NAMES } from '../../reference/celestialBodies.js'
 import {
 	ACTIVITIES,
 	ACTIVITY_NAMES,
 	DEPLOYED_EXPERIMENTS,
-	DEPLOYED_EXPERIMENT_NAMES,
-	findActivity,
-	findDeployedExperiment
-} from './experiments.js'
+	DEPLOYED_EXPERIMENT_NAMES
+} from '../../reference/experiments.js'
 import {
 	STANDARD_SITUATIONS,
 	RECOVERY_SITUATIONS,
 	ALL_SITUATIONS,
-	RECOVERY_DISPLAY_NAMES,
 	SITUATIONS_DEF
-} from './situations.js'
-import { getReferenceData } from './index.js'
+} from '../../reference/situations.js'
+import { getReferenceData } from '../../reference/index.js'
 
 describe('celestial bodies', () => {
 	it('contains all 17 vanilla bodies', () => {
@@ -28,14 +25,9 @@ describe('celestial bodies', () => {
 	})
 
 	it('Kerbin has 11 biomes', () => {
-		const kerbin = findBody('Kerbin')!
+		const kerbin = CELESTIAL_BODIES.find((b) => b.name === 'Kerbin')!
 		expect(kerbin.biomes).toHaveLength(11)
 		expect(kerbin.biomes).toContain('NorthernIceShelf')
-	})
-
-	it('biome ids without explicit displayName get pretty-printed', () => {
-		expect(prettyBiomeName('NorthernIceShelf')).toBe('Northern Ice Shelf')
-		expect(prettyBiomeName('Highlands')).toBe('Highlands')
 	})
 
 	it('BODY_NAMES is in sync with CELESTIAL_BODIES', () => {
@@ -43,7 +35,7 @@ describe('celestial bodies', () => {
 	})
 
 	it('every body and its arrays are deep-frozen', () => {
-		const kerbin = findBody('Kerbin')!
+		const kerbin = CELESTIAL_BODIES.find((b) => b.name === 'Kerbin')!
 		expect(Object.isFrozen(kerbin)).toBe(true)
 		expect(Object.isFrozen(kerbin.biomes)).toBe(true)
 		expect(Object.isFrozen(kerbin.recovery)).toBe(true)
@@ -60,12 +52,6 @@ describe('activities and deployed experiments', () => {
 	it('every activity / deployed name is unique', () => {
 		const all = [...ACTIVITY_NAMES, ...DEPLOYED_EXPERIMENT_NAMES]
 		expect(new Set(all).size).toBe(all.length)
-	})
-
-	it('finders return known entries and undefined for unknown ones', () => {
-		expect(findActivity('crewReport')?.displayName).toBe('Crew Report')
-		expect(findActivity('thisDoesNotExist')).toBeUndefined()
-		expect(findDeployedExperiment('deployedSeismicSensor')?.displayName).toBe('Seismic Sensor')
 	})
 
 	it('arrays are in sync', () => {
@@ -94,24 +80,20 @@ describe('situations', () => {
 			expect(keys, `${def.name} has wrong activity keys`).toEqual(expected)
 		}
 	})
-
-	it('every recovery situation has a display name', () => {
-		for (const r of RECOVERY_SITUATIONS) {
-			expect(RECOVERY_DISPLAY_NAMES[r]).toBeTruthy()
-		}
-	})
 })
 
 describe('getReferenceData()', () => {
-	it('returns the frozen reference snapshot', () => {
+	it('returns the frozen reference snapshot wrapped in Result.ok', () => {
 		const ref = getReferenceData()
-		expect(ref.bodies).toBe(CELESTIAL_BODIES)
-		expect(ref.activities).toBe(ACTIVITIES)
-		expect(ref.deployedExperiments).toBe(DEPLOYED_EXPERIMENTS)
-		expect(ref.situations).toBe(SITUATIONS_DEF)
-		expect(ref.recoverySituations).toBe(RECOVERY_SITUATIONS)
-		expect(Object.isFrozen(ref.bodies)).toBe(true)
-		expect(Object.isFrozen(ref.activities)).toBe(true)
-		expect(Object.isFrozen(ref.situations)).toBe(true)
+		expect(ref.ok).toBe(true)
+		if (!ref.ok) return
+		expect(ref.value.bodies).toBe(CELESTIAL_BODIES)
+		expect(ref.value.activities).toBe(ACTIVITIES)
+		expect(ref.value.deployedExperiments).toBe(DEPLOYED_EXPERIMENTS)
+		expect(ref.value.situations).toBe(SITUATIONS_DEF)
+		expect(ref.value.recoverySituations).toBe(RECOVERY_SITUATIONS)
+		expect(Object.isFrozen(ref.value.bodies)).toBe(true)
+		expect(Object.isFrozen(ref.value.activities)).toBe(true)
+		expect(Object.isFrozen(ref.value.situations)).toBe(true)
 	})
 })

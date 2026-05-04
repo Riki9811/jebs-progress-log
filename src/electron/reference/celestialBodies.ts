@@ -2,7 +2,7 @@ import { deepFreeze } from '../freeze.js'
 
 // 17 corpi celesti vanilla di Kerbal Space Program. Le mod (Outer Planets, RSS) sono fuori scope.
 // I biomi sono id grezzi così come appaiono negli scienceId del save; il displayName per la UI
-// è generato al volo da prettyBiomeName quando serve (camelCase → "Title Case").
+// va prodotto a quel livello (es. camelCase → "Title Case").
 export const CELESTIAL_BODIES: readonly CelestialBody[] = deepFreeze([
 	{
 		name: 'Sun',
@@ -13,7 +13,7 @@ export const CELESTIAL_BODIES: readonly CelestialBody[] = deepFreeze([
 		biomes: [],
 		specialBiomes: [],
 		recovery: [
-			{ name: 'SubOrbited', displayName: 'Sub-Orbit' },
+			{ name: 'SubOrbited', displayName: 'Sub-orbit' },
 			{ name: 'Orbited', displayName: 'Orbit' },
 			{ name: 'FlewBy', displayName: 'Fly-by' }
 		],
@@ -309,7 +309,16 @@ export const CELESTIAL_BODIES: readonly CelestialBody[] = deepFreeze([
 		isLandable: true,
 		hasAtmosphere: false,
 		hasWater: false,
-		biomes: ['Poles', 'Highlands', 'Midlands', 'Ridges', 'Lowlands', 'ImpactCraters', 'ImpactEjecta', 'Canyons'],
+		biomes: [
+			'Poles',
+			'Highlands',
+			'Midlands',
+			'Ridges',
+			'Lowlands',
+			'ImpactCraters',
+			'ImpactEjecta',
+			'Canyons'
+		],
 		specialBiomes: [],
 		recovery: [
 			{ name: 'SubOrbited', displayName: 'Sub-orbit' },
@@ -497,12 +506,3 @@ export const CELESTIAL_BODIES: readonly CelestialBody[] = deepFreeze([
 ])
 
 export const BODY_NAMES: readonly string[] = CELESTIAL_BODIES.map((b) => b.name)
-
-export function findBody(name: string): CelestialBody | undefined {
-	return CELESTIAL_BODIES.find((b) => b.name === name)
-}
-
-// camelCase → "Title Case", usato come fallback dalla UI quando un biome non ha display custom.
-export function prettyBiomeName(rawId: string): string {
-	return rawId.replace(/([a-z])([A-Z])/g, '$1 $2')
-}

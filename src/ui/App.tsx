@@ -40,7 +40,7 @@ function App() {
 				</div>
 				<div>
 					<p>Test: {a}</p>
-					{err && <p style={{color: "red", fontWeight: "bold"}}>ReadError: {err}</p>}
+					{err && <p style={{ color: 'red', fontWeight: 'bold' }}>ReadError: {err}</p>}
 					{b.map((str, i) => (
 						<p key={`folder-${i}`}>{str}</p>
 					))}
