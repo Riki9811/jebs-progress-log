@@ -10,7 +10,7 @@ const SAVES_ROOT = path.resolve(KSP_INSTALL_DIR, 'saves')
 
 const cache = new LruCache<string, { mtimeMs: number; data: SaveData }>(16)
 
-// Path traversal guard: il caller deve aver passato un path dentro SAVES_ROOT.
+// Path traversal guard: the resolved path must be inside SAVES_ROOT.
 function isInsideSavesRoot(p: string): boolean {
 	const resolved = path.resolve(p)
 	if (resolved === SAVES_ROOT) return true
@@ -18,30 +18,30 @@ function isInsideSavesRoot(p: string): boolean {
 	return rel !== '' && !rel.startsWith('..') && !path.isAbsolute(rel)
 }
 
-async function readKspFolder(folderPath: string): Promise<Result<Dirent[], FolderReadError>> {
+async function readKspFolder(folderPath: string): Promise<Result<Dirent[], FolderAccessError>> {
 	let stat
 	try {
 		stat = await fsp.stat(folderPath)
 	} catch (e) {
 		const code = (e as NodeJS.ErrnoException).code
-		if (code === 'ENOENT') return err({ type: 'NOT_EXISTS' })
-		return err({ type: 'CANNOT_READ' })
+		if (code === 'ENOENT') return err('NOT_EXISTS')
+		return err('CANNOT_READ')
 	}
-	if (!stat.isDirectory()) return err({ type: 'NOT_FOLDER' })
+	if (!stat.isDirectory()) return err('NOT_FOLDER')
 	try {
 		await fsp.access(folderPath, fsConstants.R_OK)
 	} catch {
-		return err({ type: 'CANNOT_READ' })
+		return err('CANNOT_READ')
 	}
 	try {
 		const entries = await fsp.readdir(folderPath, { withFileTypes: true })
 		return ok(entries)
 	} catch {
-		return err({ type: 'CANNOT_READ' })
+		return err('CANNOT_READ')
 	}
 }
 
-export async function getFolders(): Promise<Result<string[], FolderReadError>> {
+export async function getFolders(): Promise<Result<string[], FolderAccessError>> {
 	const r = await readKspFolder(SAVES_ROOT)
 	if (!r.ok) return r
 	const folders = r.value
@@ -52,13 +52,13 @@ export async function getFolders(): Promise<Result<string[], FolderReadError>> {
 
 export async function listSavesInFolder(
 	folderPath: string
-): Promise<Result<ListSavesResult, FolderReadError>> {
-	if (!isInsideSavesRoot(folderPath)) return err({ type: 'CANNOT_READ' })
+): Promise<Result<ListSavesResult, FolderAccessError>> {
+	if (!isInsideSavesRoot(folderPath)) return err('CANNOT_READ')
 	const r = await readKspFolder(folderPath)
 	if (!r.ok) return r
 
 	const summaries: SaveSummary[] = []
-	const errors: { fileName: string; error: ParseError }[] = []
+	const errors: { fileName: string; error: ParseFullSaveError }[] = []
 	for (const e of r.value) {
 		if (!e.isFile() || !e.name.endsWith('.sfs')) continue
 		const filePath = path.join(folderPath, e.name)
@@ -69,9 +69,9 @@ export async function listSavesInFolder(
 	return ok({ summaries, errors })
 }
 
-export async function parseFullSave(savePath: string): Promise<Result<SaveData, ParseError>> {
+export async function parseFullSave(savePath: string): Promise<Result<SaveData, ParseFullSaveError>> {
 	if (!isInsideSavesRoot(savePath)) {
-		return err({ type: 'IO_ERROR', reason: 'path outside saves root' })
+		return err('IO_ERROR', { reason: 'path outside saves root' })
 	}
 
 	let stats
@@ -79,8 +79,8 @@ export async function parseFullSave(savePath: string): Promise<Result<SaveData, 
 		stats = await fsp.stat(savePath)
 	} catch (e) {
 		const code = (e as NodeJS.ErrnoException).code
-		if (code === 'ENOENT') return err({ type: 'FILE_NOT_FOUND' })
-		return err({ type: 'IO_ERROR', reason: String(e) })
+		if (code === 'ENOENT') return err('FILE_NOT_FOUND')
+		return err('IO_ERROR', { reason: String(e) })
 	}
 
 	const cached = cache.get(savePath)
@@ -92,19 +92,18 @@ export async function parseFullSave(savePath: string): Promise<Result<SaveData, 
 	try {
 		content = await fsp.readFile(savePath, 'utf-8')
 	} catch (e) {
-		return err({ type: 'IO_ERROR', reason: String(e) })
+		return err('IO_ERROR', { reason: String(e) })
 	}
 
 	const result = extractSaveData(content, savePath)
 	if (!result.ok) {
-		if (result.error.type === 'PARSE') {
-			return err({
-				type: 'INVALID_FORMAT',
+		if (result.error.code === 'PARSE') {
+			return err('INVALID_FORMAT', {
 				line: result.error.line,
 				reason: result.error.reason
 			})
 		}
-		return err({ type: 'INVALID_FORMAT', line: 0, reason: 'no GAME block' })
+		return err('INVALID_FORMAT', { line: 0, reason: 'no GAME block' })
 	}
 
 	cache.set(savePath, { mtimeMs: stats.mtimeMs, data: result.value })

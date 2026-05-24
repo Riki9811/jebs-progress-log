@@ -12,28 +12,28 @@ export type ParsedScienceId = {
 	biome: string | null
 }
 
-export type ScienceIdParseFailure = { reason: string; rawId: string }
+export type ScienceIdParseFailure = { code: 'SCIENCE_ID_PARSE_ERROR'; reason: string; rawId: string }
 
 export function parseScienceId(rawId: string): Result<ParsedScienceId, ScienceIdParseFailure> {
 	const at = rawId.indexOf('@')
 	if (at < 0) {
-		return err({ reason: 'missing @ separator', rawId })
+		return err('SCIENCE_ID_PARSE_ERROR', { reason: 'missing @ separator', rawId })
 	}
 	const experimentId = rawId.slice(0, at)
 	const location = rawId.slice(at + 1)
 	if (experimentId === '' || location === '') {
-		return err({ reason: 'empty experiment or location', rawId })
+		return err('SCIENCE_ID_PARSE_ERROR', { reason: 'empty experiment or location', rawId })
 	}
 
 	const body = longestPrefix(location, BODY_NAMES)
 	if (!body) {
-		return err({ reason: 'no known body matches the location', rawId })
+		return err('SCIENCE_ID_PARSE_ERROR', { reason: 'no known body matches the location', rawId })
 	}
 
 	const afterBody = location.slice(body.length)
 	const situation = longestPrefix(afterBody, ALL_SITUATIONS as readonly string[])
 	if (!situation) {
-		return err({ reason: 'no known situation matches', rawId })
+		return err('SCIENCE_ID_PARSE_ERROR', { reason: 'no known situation matches', rawId })
 	}
 
 	const biomeRaw = afterBody.slice(situation.length)

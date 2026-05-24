@@ -1,28 +1,59 @@
-// Result<T, E> vive in src/electron/result.ts insieme agli helper ok/err.
-// Qui lo riferiamo via inline import per averlo disponibile come tipo globale
-// senza trasformare questo file in un module.
-type Result<T, E> = import('./src/electron/result.js').Result<T, E>
+// =============================================================================
+// IPC contract: single source of truth
+// =============================================================================
+//
+// `Result<V, E>` is the generic result type for every outcome (ok/err).
+// `IpcInvokeMapping` defines per-endpoint args/value/error types (domain errors
+// from the main-process perspective).
+// `Window['electron']` derives the renderer-exposed API, inlining `FrameError`
+// into the error branch of each endpoint.
 
-// === IPC errors ===
+type Result<V, E> = { ok: true; value: V } | { ok: false; error: E }
 
-// Sollevato dal wrapper `ipcMainHandle` quando il frame del sender non corrisponde
-// alla finestra fidata. Si aggiunge AUTOMATICAMENTE alla union di errori di ogni
-// endpoint via `WithFrameError`, quindi i singoli error type qui sotto NON lo
-// includono.
-type EventFrameError = { type: 'EVENT_FRAME_ERROR' }
+// --- IPC error types ---
+// Each error is { code: '<CODE>'; ...optionalPayload }. Discriminated by `code`.
 
-type FolderReadError = { type: 'NOT_EXISTS' } | { type: 'NOT_FOLDER' } | { type: 'CANNOT_READ' }
+type FrameError = { code: 'EVENT_FRAME_ERROR' }
 
-type ParseError =
-	| { type: 'FILE_NOT_FOUND' }
-	| { type: 'INVALID_FORMAT'; line: number; reason: string }
-	| { type: 'IO_ERROR'; reason: string }
+type FolderAccessError = { code: 'NOT_EXISTS' } | { code: 'NOT_FOLDER' } | { code: 'CANNOT_READ' }
 
-// === Save / science domain types ===
+type ParseFullSaveError =
+	| { code: 'FILE_NOT_FOUND' }
+	| { code: 'INVALID_FORMAT'; line: number; reason: string }
+	| { code: 'IO_ERROR'; reason: string }
+
+// --- Mapping ---
+
+type IpcInvokeMapping = {
+	getFoldersData: { args: void; value: string[]; error: FolderAccessError }
+	getReferenceData: { args: void; value: ReferenceData; error: never }
+	listSavesInFolder: { args: string; value: ListSavesResult; error: FolderAccessError }
+	parseFullSave: { args: string; value: SaveData; error: ParseFullSaveError }
+}
+
+type MainResult<K extends keyof IpcInvokeMapping> = Result<
+	IpcInvokeMapping[K]['value'],
+	IpcInvokeMapping[K]['error']
+>
+
+type RendererResult<K extends keyof IpcInvokeMapping> = Result<
+	IpcInvokeMapping[K]['value'],
+	IpcInvokeMapping[K]['error'] | FrameError
+>
+
+interface Window {
+	electron: {
+		[K in keyof IpcInvokeMapping]: IpcInvokeMapping[K]['args'] extends void
+			? () => Promise<RendererResult<K>>
+			: (args: IpcInvokeMapping[K]['args']) => Promise<RendererResult<K>>
+	}
+}
+
+// #region Game data types
 
 type GameMode = 'CAREER' | 'SCIENCE_SANDBOX' | 'SANDBOX'
 
-// 6 situazioni "in flight" — pilotano la matrice activityTypes nelle tabelle UI
+// 6 in-flight situations — drive the activityTypes matrix in the UI tables
 type StandardSituation =
 	| 'SrfLanded'
 	| 'SrfSplashed'
@@ -31,23 +62,23 @@ type StandardSituation =
 	| 'InSpaceLow'
 	| 'InSpaceHigh'
 
-// 5 situazioni di recovery — appaiono negli scienceId del save ma vanno in un canale separato
+// 5 recovery situations — appear in save scienceIds but are routed to a separate channel
 type RecoverySituation = 'Flew' | 'SubOrbited' | 'Orbited' | 'FlewBy' | 'Surfaced'
 
-// Tutto ciò che può comparire nell'id di uno ScienceRecord
+// Any value that can appear in a ScienceRecord id
 type Situation = StandardSituation | RecoverySituation
 
-// 'biome' | 'global' = celle normali / cella tall (rowspan completo); null = casella non disponibile
+// 'biome' | 'global' = per-biome cell / tall cell (full rowspan); null = slot not available
 type ActivityType = 'biome' | 'global' | null
 
 type Activity = {
-	name: string // es. 'crewReport'
-	displayName: string // es. 'Crew Report'
+	name: string // e.g. 'crewReport'
+	displayName: string // e.g. 'Crew Report'
 	requiresAtmosphere: boolean
 }
 
 type DeployedExperiment = {
-	name: string // es. 'deployedSeismicSensor'
+	name: string // e.g. 'deployedSeismicSensor'
 	displayName: string
 	requiresAtmosphere: boolean
 	requiresVacuum: boolean
@@ -106,17 +137,17 @@ type ScienceRecord = {
 	situation: Situation
 	biome: string | null
 	title: string
-	collected: number // ex sci — punti scienza già raccolti
-	total: number // ex cap — punti scienza massimi ottenibili
+	collected: number // ex sci — science points already collected
+	total: number // ex cap — maximum obtainable science points
 }
 
-// Foglia: aggregazione (situation × biome × experiment)
+// Leaf: aggregation (situation × biome × experiment)
 type BiomeStats = {
 	biome: string
 	perExperiment: Record<string, ScienceRecord>
 }
 
-// Una situation standard, opzione B: biomi normali separati dagli esperimenti "global" (no-biome)
+// A standard situation: per-biome experiments separated from "global" (no-biome) ones
 type SituationStats = {
 	situation: StandardSituation
 	scienceCollected: number
@@ -125,14 +156,14 @@ type SituationStats = {
 	global: Record<string, ScienceRecord>
 }
 
-// Recovery: nessun biome, solo experiment → record
+// Recovery: no biome, experiment → record only
 type RecoveryStats = {
 	recovery: RecoverySituation
 	scienceCollected: number
 	perExperiment: Record<string, ScienceRecord>
 }
 
-// I 3 canali per body
+// The 3 channels per body
 type BodyStats = {
 	body: string
 	scienceCollected: number
@@ -154,29 +185,7 @@ type SaveData = SaveSummary & {
 
 type ListSavesResult = {
 	summaries: SaveSummary[]
-	errors: { fileName: string; error: ParseError }[]
+	errors: { fileName: string; error: ParseFullSaveError }[]
 }
 
-// === IPC contract: single source of truth ===
-// `IpcInvokeMapping` definisce gli endpoint dal punto di vista del main (errori di dominio).
-// `IpcRendererApi` (esposto su `window.electron`) viene derivato aggiungendo
-// `EventFrameError` alla union di errori di ogni endpoint.
-
-type IpcInvokeMapping = {
-	getFoldersData: { args: void; result: Result<string[], FolderReadError> }
-	getReferenceData: { args: void; result: Result<ReferenceData, never> }
-	listSavesInFolder: { args: string; result: Result<ListSavesResult, FolderReadError> }
-	parseFullSave: { args: string; result: Result<SaveData, ParseError> }
-}
-
-type WithFrameError<R> = R extends Result<infer V, infer E> ? Result<V, E | EventFrameError> : R
-
-type IpcRendererApi = {
-	[K in keyof IpcInvokeMapping]: IpcInvokeMapping[K]['args'] extends void
-		? () => Promise<WithFrameError<IpcInvokeMapping[K]['result']>>
-		: (args: IpcInvokeMapping[K]['args']) => Promise<WithFrameError<IpcInvokeMapping[K]['result']>>
-}
-
-interface Window {
-	electron: IpcRendererApi
-}
+// #endregion

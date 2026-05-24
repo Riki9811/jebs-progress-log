@@ -10,6 +10,6 @@ electron.contextBridge.exposeInMainWorld('electron', {
 function ipcInvoke<Key extends keyof IpcInvokeMapping>(
 	key: Key,
 	args: IpcInvokeMapping[Key]['args']
-): Promise<IpcInvokeMapping[Key]['result']> {
+): Promise<RendererResult<Key>> {
 	return electron.ipcRenderer.invoke(key, args)
 }

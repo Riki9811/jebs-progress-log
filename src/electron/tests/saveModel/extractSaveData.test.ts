@@ -31,13 +31,13 @@ describe('extractSaveData', () => {
 	it('returns NO_GAME_BLOCK when there is no GAME block', () => {
 		const r = extractSaveData('something\n{\nx = 1\n}', SAVE_PATH)
 		expect(r.ok).toBe(false)
-		if (!r.ok) expect(r.error.type).toBe('NO_GAME_BLOCK')
+		if (!r.ok) expect(r.error.code).toBe('NO_GAME_BLOCK')
 	})
 
 	it('forwards parse errors', () => {
 		const r = extractSaveData('GAME\n{\nversion = 1', SAVE_PATH)
 		expect(r.ok).toBe(false)
-		if (!r.ok && r.error.type === 'PARSE') {
+		if (!r.ok && r.error.code === 'PARSE') {
 			expect(r.error.reason).toMatch(/unclosed/)
 		}
 	})
@@ -126,7 +126,7 @@ describe('extractSaveData', () => {
 
 		const mun = r.value.aggregations.perBody.Mun
 		const munInSpaceLow = mun?.perSituation.InSpaceLow
-		// crewReport@MunInSpaceLow ha biome vuoto → finisce in global
+		// crewReport@MunInSpaceLow has no biome → routed to global
 		expect(munInSpaceLow?.global.crewReport).toBeDefined()
 		expect(Object.keys(munInSpaceLow?.biomes ?? {})).toHaveLength(0)
 		expect(r.value.aggregations.totalScienceCollected).toBeCloseTo(12.0, 5)
@@ -179,12 +179,12 @@ describe('extractSaveData', () => {
 		expect(kerbin.recoveries.Surfaced?.perExperiment.recovery).toBeDefined()
 		expect(kerbin.recoveries.Flew?.perExperiment.crewReport).toBeDefined()
 
-		// deployed experiment → deployedPerSituation (su Mun)
+		// deployed experiment → deployedPerSituation (on Mun)
 		const mun = r.value.aggregations.perBody.Mun
 		expect(
 			mun?.deployedPerSituation.SrfLanded?.biomes.Highlands?.perExperiment.deployedSeismicSensor
 		).toBeDefined()
-		// e NON deve apparire nel canale standard
+		// must not appear in the standard channel
 		expect(mun?.perSituation.SrfLanded).toBeUndefined()
 	})
 

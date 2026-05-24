@@ -5,17 +5,17 @@ import { isBlock, asArray, stringField, numberField } from '../parser/sfsHelpers
 import { buildAggregations } from './aggregateScience.js'
 import { ok, err } from '../result.js'
 
-export type ExtractFailure = { type: 'PARSE'; line: number; reason: string } | { type: 'NO_GAME_BLOCK' }
+export type ExtractFailure = { code: 'PARSE'; line: number; reason: string } | { code: 'NO_GAME_BLOCK' }
 
 export function extractSaveData(input: string, filePath: string): Result<SaveData, ExtractFailure> {
 	const parsed = parseSfs(input)
 	if (!parsed.ok) {
-		return err({ type: 'PARSE', line: parsed.error.line, reason: parsed.error.reason })
+		return err('PARSE', { line: parsed.error.line, reason: parsed.error.reason })
 	}
 
 	const game = parsed.value.GAME
 	if (!isBlock(game)) {
-		return err({ type: 'NO_GAME_BLOCK' })
+		return err('NO_GAME_BLOCK')
 	}
 
 	const summary = extractSummary(game, filePath)

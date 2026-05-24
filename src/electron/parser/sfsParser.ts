@@ -6,7 +6,7 @@ export type SfsBlock = {
 	[key: string]: SfsValue | SfsValue[]
 }
 
-export type SfsParseFailure = { line: number; reason: string }
+export type SfsParseFailure = { code: 'PARSE_ERROR'; line: number; reason: string }
 
 export function parseSfs(input: string): Result<SfsBlock, SfsParseFailure> {
 	const tokens = tokenize(input)
@@ -35,7 +35,10 @@ function parseEntry(ctx: Ctx, target: SfsBlock): Result<void, SfsParseFailure> {
 		ctx.pos++
 		const next = ctx.tokens[ctx.pos]
 		if (!next || next.type !== 'LBRACE') {
-			return err({ line: tok.line, reason: `expected '{' after block header '${tok.value}'` })
+			return err('PARSE_ERROR', {
+				line: tok.line,
+				reason: `expected '{' after block header '${tok.value}'`
+			})
 		}
 		ctx.pos++ // consume LBRACE
 		const sub = parseBlockBody(ctx, next.line)
@@ -43,7 +46,7 @@ function parseEntry(ctx: Ctx, target: SfsBlock): Result<void, SfsParseFailure> {
 		addToBlock(target, tok.value, sub.value)
 		return ok(undefined)
 	}
-	return err({ line: tok.line, reason: `unexpected ${tok.type}` })
+	return err('PARSE_ERROR', { line: tok.line, reason: `unexpected ${tok.type}` })
 }
 
 function parseBlockBody(ctx: Ctx, openLine: number): Result<SfsBlock, SfsParseFailure> {
@@ -57,7 +60,7 @@ function parseBlockBody(ctx: Ctx, openLine: number): Result<SfsBlock, SfsParseFa
 		const result = parseEntry(ctx, block)
 		if (!result.ok) return result
 	}
-	return err({ line: openLine, reason: 'unclosed block' })
+	return err('PARSE_ERROR', { line: openLine, reason: 'unclosed block' })
 }
 
 function addToBlock(block: SfsBlock, key: string, value: SfsValue): void {
