@@ -29,6 +29,8 @@ type IpcInvokeMapping = {
 	getReferenceData: { args: void; value: ReferenceData; error: never }
 	listSavesInFolder: { args: string; value: ListSavesResult; error: FolderAccessError }
 	parseFullSave: { args: string; value: SaveData; error: ParseFullSaveError }
+	getPreferences: { args: void; value: Preferences; error: never }
+	setPreference: { args: Partial<Preferences>; value: void; error: never }
 }
 
 type MainResult<K extends keyof IpcInvokeMapping> = Result<
@@ -47,6 +49,7 @@ interface Window {
 			? () => Promise<RendererResult<K>>
 			: (args: IpcInvokeMapping[K]['args']) => Promise<RendererResult<K>>
 	}
+	bootTheme: Preferences['theme'] | null
 }
 
 // #region Game data types
@@ -194,3 +197,7 @@ type ListSavesResult = {
 }
 
 // #endregion
+
+type Preferences = {
+	theme: 'system' | 'dark' | 'light'
+}
