@@ -1,8 +1,8 @@
 import { deepFreeze } from '../freeze.js'
 
-// 17 corpi celesti vanilla di Kerbal Space Program. Le mod (Outer Planets, RSS) sono fuori scope.
-// I biomi sono id grezzi così come appaiono negli scienceId del save; il displayName per la UI
-// va prodotto a quel livello (es. camelCase → "Title Case").
+// 17 vanilla celestial bodies for Kerbal Space Program. Mods (Outer Planets, RSS) are out of scope.
+// Biome entries are raw ids as they appear in save scienceIds; display names for the UI
+// are derived at that layer (e.g. camelCase → "Title Case").
 export const CELESTIAL_BODIES: readonly CelestialBody[] = deepFreeze([
 	{
 		name: 'Sun',

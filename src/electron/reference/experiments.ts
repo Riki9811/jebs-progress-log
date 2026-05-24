@@ -1,7 +1,7 @@
 import { deepFreeze } from '../freeze.js'
 
-// Le 18 "activities" vanilla di KSP (esperimenti scientifici standard).
-// L'id (`name`) è quello che compare prima della `@` negli scienceId del save.
+// The 18 vanilla KSP activities (standard science experiments).
+// The id (`name`) is the segment before `@` in save scienceIds.
 export const ACTIVITIES: readonly Activity[] = deepFreeze([
 	{ name: 'asteroidSample', displayName: 'Asteroid Sample', requiresAtmosphere: false },
 	{ name: 'atmosphereAnalysis', displayName: 'Atmosphere Analysis', requiresAtmosphere: true },
@@ -23,7 +23,7 @@ export const ACTIVITIES: readonly Activity[] = deepFreeze([
 	{ name: 'temperatureScan', displayName: 'Temperature Scan', requiresAtmosphere: false }
 ])
 
-// I 4 esperimenti del DLC Breaking Ground. Pattern dell'id identico alle activities standard.
+// The 4 Breaking Ground DLC deployed experiments. Id pattern is identical to standard activities.
 export const DEPLOYED_EXPERIMENTS: readonly DeployedExperiment[] = deepFreeze([
 	{
 		name: 'deployedGooObservation',

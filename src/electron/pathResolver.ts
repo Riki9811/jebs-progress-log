@@ -11,5 +11,5 @@ export function getUIPath(): string {
 	return path.join(app.getAppPath(), 'dist-react', 'index.html')
 }
 
-// Placeholder hard-coded: la detection automatica del KSP install dir è rimandata.
+// Hard-coded placeholder: automatic KSP install directory detection is not yet implemented.
 export const KSP_INSTALL_DIR = '[PATH_TO_KSP]'

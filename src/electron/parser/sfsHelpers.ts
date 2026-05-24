@@ -1,8 +1,8 @@
 import type { SfsBlock, SfsValue } from './sfsParser.js'
 
-// Accessor tipati per i nodi di un SfsBlock. Il parser non distingue tra "campo singolo"
-// e "campo ripetuto": chi consuma sceglie via `asArray` / `stringField` / `numberField`
-// secondo cosa si aspetta. `isBlock` discrimina tra valore stringa e sub-blocco.
+// Typed accessors for SfsBlock nodes. The parser does not distinguish between a single
+// field and a repeated field: callers choose via `asArray` / `stringField` / `numberField`
+// based on the expected shape. `isBlock` discriminates between a string value and a sub-block.
 
 export function isBlock(v: SfsValue | SfsValue[] | undefined): v is SfsBlock {
 	return typeof v === 'object' && v !== null && !Array.isArray(v)

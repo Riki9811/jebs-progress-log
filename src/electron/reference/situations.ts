@@ -1,8 +1,8 @@
 import { deepFreeze } from '../freeze.js'
 
-// Le 6 situazioni "in flight" che pilotano la matrice activityTypes nelle tabelle UI.
-// La fonte di verità per i displayName delle recovery situation è il campo `displayName`
-// dentro `body.recovery` di ogni body in `celestialBodies.ts`.
+// The 6 in-flight situations that drive the activityTypes matrix in the UI tables.
+// The source of truth for recovery situation display names is the `displayName` field
+// inside `body.recovery` for each body in `celestialBodies.ts`.
 export const STANDARD_SITUATIONS = [
 	'SrfLanded',
 	'SrfSplashed',
@@ -12,8 +12,8 @@ export const STANDARD_SITUATIONS = [
 	'InSpaceHigh'
 ] as const satisfies readonly StandardSituation[]
 
-// Le 5 situazioni di recovery che possono comparire negli scienceId del save
-// (es. `recovery@MunSurfaced`, `crewReport@KerbinFlew`).
+// The 5 recovery situations that can appear in save scienceIds
+// (e.g. `recovery@MunSurfaced`, `crewReport@KerbinFlew`).
 export const RECOVERY_SITUATIONS = [
 	'Flew',
 	'SubOrbited',
@@ -22,15 +22,15 @@ export const RECOVERY_SITUATIONS = [
 	'Surfaced'
 ] as const satisfies readonly RecoverySituation[]
 
-// Lista completa usata dallo scienceIdParser per il longest-prefix match.
+// Full list used by the scienceIdParser for longest-prefix matching.
 export const ALL_SITUATIONS = [
 	...STANDARD_SITUATIONS,
 	...RECOVERY_SITUATIONS
 ] as const satisfies readonly Situation[]
 
-// Definizione ricca delle 6 situazioni standard: include il displayName e la matrice
-// activityTypes (per ogni Activity dice se in questa situation produce record per-biome,
-// un singolo record "global", oppure non è disponibile).
+// Full definitions for the 6 standard situations: includes displayName and the activityTypes
+// matrix (per Activity, whether this situation yields a per-biome record, a single "global"
+// record, or is unavailable).
 export const SITUATIONS_DEF: readonly SituationDef[] = deepFreeze([
 	{
 		name: 'SrfLanded',

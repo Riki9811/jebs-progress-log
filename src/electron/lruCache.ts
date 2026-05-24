@@ -1,5 +1,5 @@
-// LRU semplice. Ogni `get` rinfresca la chiave portandola in fondo all'ordine
-// di inserzione della Map; quando la dimensione eccede `max`, rimuoviamo la più vecchia.
+// Minimal LRU cache. Each `get` refreshes the key by moving it to the end of the Map's
+// insertion order; when size exceeds `max`, the oldest entry is evicted.
 export class LruCache<K, V> {
 	private map = new Map<K, V>()
 	constructor(private max: number) {}

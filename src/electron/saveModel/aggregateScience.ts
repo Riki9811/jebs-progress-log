@@ -4,10 +4,10 @@ import { DEPLOYED_EXPERIMENT_NAMES } from '../reference/experiments.js'
 const RECOVERY_SET = new Set<string>(RECOVERY_SITUATIONS)
 const DEPLOYED_SET = new Set<string>(DEPLOYED_EXPERIMENT_NAMES)
 
-// Costruisce gli aggregati per body. Ogni record viene smistato in 1 di 3 canali:
+// Builds per-body aggregates. Each record is routed to one of 3 channels:
 // - recovery situation → `recoveries`
-// - deployed experiment in situation standard → `deployedPerSituation`
-// - tutto il resto (activity standard in situation standard) → `perSituation`
+// - deployed experiment in a standard situation → `deployedPerSituation`
+// - everything else (standard activity in a standard situation) → `perSituation`
 export function buildAggregations(records: ScienceRecord[]): SaveAggregations {
 	const perBody: Record<string, BodyStats> = {}
 	let total = 0
@@ -36,7 +36,7 @@ export function buildAggregations(records: ScienceRecord[]): SaveAggregations {
 			rec.scienceCollected += record.collected
 			rec.perExperiment[record.experimentId] = record
 		} else {
-			// per esclusione: situation è StandardSituation
+			// by exclusion: situation is a StandardSituation
 			const sit = record.situation as StandardSituation
 			const target = DEPLOYED_SET.has(record.experimentId)
 				? body.deployedPerSituation
