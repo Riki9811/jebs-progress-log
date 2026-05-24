@@ -1,7 +1,7 @@
 import electron from 'electron'
 
 electron.contextBridge.exposeInMainWorld('electron', {
-	getFoldersData: () => ipcInvoke('getFoldersData', undefined),
+	getSaveFolders: () => ipcInvoke('getSaveFolders', undefined),
 	getReferenceData: () => ipcInvoke('getReferenceData', undefined),
 	listSavesInFolder: (folderName) => ipcInvoke('listSavesInFolder', folderName),
 	parseFullSave: (savePath) => ipcInvoke('parseFullSave', savePath)

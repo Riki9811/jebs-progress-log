@@ -41,13 +41,25 @@ async function readKspFolder(folderPath: string): Promise<Result<Dirent[], Folde
 	}
 }
 
-export async function getFolders(): Promise<Result<string[], FolderAccessError>> {
+export async function getSaveFolders(): Promise<Result<SaveFolder[], FolderAccessError>> {
 	const r = await readKspFolder(SAVES_ROOT)
 	if (!r.ok) return r
-	const folders = r.value
+	const candidates = r.value
 		.filter((it) => it.isDirectory() && !UNWANTED_FOLDERS.includes(it.name))
-		.map((it) => path.join(SAVES_ROOT, it.name))
-	return ok(folders)
+		.map((it) => ({ name: it.name, path: path.join(SAVES_ROOT, it.name) }))
+	// Only surface folders that look like real saves — i.e. contain persistent.sfs.
+	// Checks run in parallel to avoid serializing I/O across N folders.
+	const checks = await Promise.all(
+		candidates.map(async (c) => {
+			try {
+				await fsp.access(path.join(c.path, 'persistent.sfs'), fsConstants.R_OK)
+				return c
+			} catch {
+				return null
+			}
+		})
+	)
+	return ok(checks.filter((c): c is SaveFolder => c !== null))
 }
 
 export async function listSavesInFolder(

@@ -25,7 +25,7 @@ type ParseFullSaveError =
 // --- Mapping ---
 
 type IpcInvokeMapping = {
-	getFoldersData: { args: void; value: string[]; error: FolderAccessError }
+	getSaveFolders: { args: void; value: SaveFolder[]; error: FolderAccessError }
 	getReferenceData: { args: void; value: ReferenceData; error: never }
 	listSavesInFolder: { args: string; value: ListSavesResult; error: FolderAccessError }
 	parseFullSave: { args: string; value: SaveData; error: ParseFullSaveError }
@@ -119,6 +119,11 @@ type ReferenceData = {
 	situations: readonly SituationDef[]
 	recoverySituations: readonly RecoverySituation[]
 }
+
+// A save folder discovered under <KSP>/saves: the folder name (= the save's
+// display name in KSP) and its absolute path. Only folders containing at least
+// a `persistent.sfs` are surfaced.
+type SaveFolder = { name: string; path: string }
 
 type SaveSummary = {
 	path: string
