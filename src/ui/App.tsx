@@ -6,22 +6,17 @@ import './App.css'
 
 function App() {
 	const [count, setCount] = useState(0)
-	const [a, setA] = useState('')
-	const [b, setB] = useState<string[]>([])
+	const [folders, setFolders] = useState<string[]>([])
 	const [err, setErr] = useState('')
 
 	useEffect(() => {
 		async function fetchData() {
 			const folderData = await window.electron.getFoldersData()
-			if (!folderData.ok) setErr(folderData.error)
-			else setB(folderData.value)
+			if (!folderData.ok) setErr(folderData.error.code)
+			else setFolders(folderData.value)
 		}
 
 		fetchData()
-
-		const unsub = window.electron.subscribeTestEvent((data) => setA(data))
-
-		return unsub
 	}, [])
 
 	return (
@@ -39,9 +34,8 @@ function App() {
 					</p>
 				</div>
 				<div>
-					<p>Test: {a}</p>
 					{err && <p style={{ color: 'red', fontWeight: 'bold' }}>ReadError: {err}</p>}
-					{b.map((str, i) => (
+					{folders.map((str, i) => (
 						<p key={`folder-${i}`}>{str}</p>
 					))}
 				</div>
