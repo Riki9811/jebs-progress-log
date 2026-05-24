@@ -22,22 +22,22 @@
 	--accentSoft: rgba(72, 127, 214, 0.15);
 
 	/* Dark palette */
-	--darkBg: #1a1c28; /* main canvas (editor area) */
-	--darkPanel: #1f2230; /* sidebars, elevated panels */
-	--darkBar: #292d40; /* title bar, status bar */
-	--darkHover: #2d3146; /* interactive hover surfaces */
-	--darkBorder: #2a2d40; /* dividers, borders */
-	--darkText: #d4d4dc; /* primary text */
-	--darkTextMuted: #7a7d92; /* muted/disabled text */
+	--darkBg: #1a1f26; /* main canvas (editor area) */
+	--darkPanel: #1f252e; /* sidebars, elevated panels */
+	--darkBar: #2a323f; /* title bar, status bar */
+	--darkHover: #2e3744; /* interactive hover surfaces */
+	--darkBorder: #2a323e; /* dividers, borders */
+	--darkText: #d4d7dc; /* primary text */
+	--darkTextMuted: #7c8590; /* muted/disabled text */
 
 	/* Light palette */
-	--lightBg: #f6f6fa;
-	--lightPanel: #e7e8f0;
-	--lightBar: #c9cbd9;
-	--lightHover: #d8d9e3;
-	--lightBorder: #d2d3df;
-	--lightText: #3c3d4a;
-	--lightTextMuted: #8b8c9c;
+	--lightBg: #f2f5fa;
+	--lightPanel: #dfe6f0;
+	--lightBar: #c0cddd;
+	--lightHover: #cbd8e7;
+	--lightBorder: #c8d4e3;
+	--lightText: #2b343f;
+	--lightTextMuted: #7d8a9c;
 
 	/* ---------- Semantic tokens (default = dark) --------------------------- */
 	--bgCol: var(--darkBg);
