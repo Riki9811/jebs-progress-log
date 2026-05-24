@@ -1,101 +1,106 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import styles from './App.module.css'
 
 function App() {
-	const [count, setCount] = useState(0)
-	const [folders, setFolders] = useState<string[]>([])
+	const [folders, setFolders] = useState<SaveFolder[]>([])
 	const [err, setErr] = useState('')
+	const [theme, setTheme] = useState<'dark' | 'light'>('dark')
 
 	useEffect(() => {
 		async function fetchData() {
-			const folderData = await window.electron.getFoldersData()
+			const folderData = await window.electron.getSaveFolders()
 			if (!folderData.ok) setErr(folderData.error.code)
 			else setFolders(folderData.value)
 		}
-
 		fetchData()
 	}, [])
 
+	useEffect(() => {
+		document.body.classList.toggle('lightTheme', theme === 'light')
+	}, [theme])
+
+	// =========================================================================
+	// DEMO SHELL — temporary scaffolding to show off the design tokens.
+	// To start the real UI, delete this whole <div className={styles.shell}>.
+	// =========================================================================
 	return (
-		<>
-			<section id="center">
-				<div className="hero">
-					<img src={heroImg} className="base" width="170" height="179" alt="" />
-					<img src={reactLogo} className="framework" alt="React logo" />
-					<img src={viteLogo} className="vite" alt="Vite logo" />
-				</div>
-				<div>
-					<h1>Get started</h1>
-					<p>
-						Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-					</p>
-				</div>
-				<div>
-					{err && <p style={{ color: 'red', fontWeight: 'bold' }}>ReadError: {err}</p>}
-					{folders.map((str, i) => (
-						<p key={`folder-${i}`}>{str}</p>
+		<div className={styles.shell}>
+			<header className={styles.titleBar}>
+				<nav className={styles.titleBarMenu}>
+					<span>File</span>
+					<span>Edit</span>
+					<span>Selection</span>
+					<span>View</span>
+					<span>Help</span>
+				</nav>
+				<div className={styles.titleBarTitle}>jebs-progress-log</div>
+			</header>
+
+			<div className={styles.body}>
+				<nav className={styles.activityBar}>
+					<span>◰</span>
+					<span>⌕</span>
+					<span>⎇</span>
+				</nav>
+
+				<aside className={styles.sidebar}>
+					<h6>Saves</h6>
+					{err && <p>ReadError: {err}</p>}
+					{folders.map((f) => (
+						<p key={f.path}>{f.name}</p>
 					))}
-				</div>
-				<button type="button" className="counter" onClick={() => setCount((count) => count + 1)}>
-					Count is {count}
-				</button>
-			</section>
+				</aside>
 
-			<div className="ticks"></div>
+				<main className={styles.main}>
+					<section className={styles.demoBlock}>
+						<h1>Jeb's Progress Log</h1>
+						<h2>Subtitle — typography baseline</h2>
+						<h3>Section heading (H3)</h3>
+						<p>
+							Paragraph copy renders with the default body font and the semantic
+							<code> --textCol </code> token. Long lines, no fuss. Lorem ipsum dolor
+							sit amet, consectetur adipiscing elit.
+						</p>
+						<small>Small / muted helper text</small>
+					</section>
 
-			<section id="next-steps">
-				<div id="docs">
-					<h2>Documentation</h2>
-					<p>Your questions, answered</p>
-					<ul>
-						<li>
-							<a href="https://vite.dev/" target="_blank">
-								<img className="logo" src={viteLogo} alt="" />
-								Explore Vite
-							</a>
-						</li>
-						<li>
-							<a href="https://react.dev/" target="_blank">
-								<img className="button-icon" src={reactLogo} alt="" />
-								Learn more
-							</a>
-						</li>
-					</ul>
-				</div>
-				<div id="social">
-					<h2>Connect with us</h2>
-					<p>Join the Vite community</p>
-					<ul>
-						<li>
-							<a href="https://github.com/vitejs/vite" target="_blank">
-								GitHub
-							</a>
-						</li>
-						<li>
-							<a href="https://chat.vite.dev/" target="_blank">
-								Discord
-							</a>
-						</li>
-						<li>
-							<a href="https://x.com/vite_js" target="_blank">
-								X.com
-							</a>
-						</li>
-						<li>
-							<a href="https://bsky.app/profile/vite.dev" target="_blank">
-								Bluesky
-							</a>
-						</li>
-					</ul>
-				</div>
-			</section>
+					<section className={styles.demoBlock}>
+						<h6>Form elements</h6>
+						<div className={styles.row}>
+							<label htmlFor="demo-input">Label</label>
+							<input id="demo-input" type="text" placeholder="Type something…" />
+						</div>
+						<div className={styles.row}>
+							<button type="button">Default button</button>
+							<button type="button" className="primary">
+								Primary button
+							</button>
+							<button type="button" disabled>
+								Disabled
+							</button>
+						</div>
+					</section>
 
-			<div className="ticks"></div>
-			<section id="spacer"></section>
-		</>
+					<section className={styles.demoBlock}>
+						<h6>Theme</h6>
+						<div className={styles.row}>
+							<button
+								type="button"
+								className="primary"
+								onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+							>
+								Toggle theme
+							</button>
+							<small>current: {theme}</small>
+						</div>
+					</section>
+				</main>
+			</div>
+
+			<footer className={styles.statusBar}>
+				<span>{folders.length} save(s) loaded</span>
+			</footer>
+		</div>
 	)
 }
 

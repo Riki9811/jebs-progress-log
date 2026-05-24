@@ -1,109 +1,214 @@
+/* =============================================================================
+ * App-level global styles.
+ *
+ * Architecture:
+ *   1. Color PRIMITIVES — raw palette values for each theme. Never used directly
+ *      by components; only by the semantic tokens below.
+ *   2. SEMANTIC tokens (--bgCol, --textCol, ...) — what components actually
+ *      consume. Default branch = dark; `body.lightTheme` re-binds them to the
+ *      light primitives. Add/remove the class to switch theme.
+ *   3. Base element styles wired to the semantic tokens.
+ *
+ * To tweak a single color: edit the primitive at the top.
+ * To add a new theme: define a new primitive set + a new body.<themeName> block.
+ * ============================================================================= */
+
 :root {
-	--text: #6b6375;
-	--text-h: #08060d;
-	--bg: #fff;
-	--border: #e5e4e7;
-	--code-bg: #f4f3ec;
-	--accent: #aa3bff;
-	--accent-bg: rgba(170, 59, 255, 0.1);
-	--accent-border: rgba(170, 59, 255, 0.5);
-	--social-bg: rgba(244, 243, 236, 0.5);
-	--shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+	/* ---------- Color primitives ------------------------------------------- */
 
-	--sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-	--heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-	--mono: ui-monospace, Consolas, monospace;
+	/* Accent — shared between themes */
+	--accent: #487fd6;
+	--accentBright: #5d96e8;
+	--accentSoft: rgba(72, 127, 214, 0.15);
 
-	font: 18px/145% var(--sans);
-	letter-spacing: 0.18px;
-	color-scheme: light dark;
-	color: var(--text);
-	background: var(--bg);
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+	/* Dark palette */
+	--darkBg: #1a1c28; /* main canvas (editor area) */
+	--darkPanel: #1f2230; /* sidebars, elevated panels */
+	--darkBar: #292d40; /* title bar, status bar */
+	--darkHover: #2d3146; /* interactive hover surfaces */
+	--darkBorder: #2a2d40; /* dividers, borders */
+	--darkText: #d4d4dc; /* primary text */
+	--darkTextMuted: #7a7d92; /* muted/disabled text */
 
-	@media (max-width: 1024px) {
-		font-size: 16px;
-	}
+	/* Light palette */
+	--lightBg: #f6f6fa;
+	--lightPanel: #e7e8f0;
+	--lightBar: #c9cbd9;
+	--lightHover: #d8d9e3;
+	--lightBorder: #d2d3df;
+	--lightText: #3c3d4a;
+	--lightTextMuted: #8b8c9c;
+
+	/* ---------- Semantic tokens (default = dark) --------------------------- */
+	--bgCol: var(--darkBg);
+	--panelCol: var(--darkPanel);
+	--barCol: var(--darkBar);
+	--hoverCol: var(--darkHover);
+	--borderCol: var(--darkBorder);
+	--textCol: var(--darkText);
+	--textColMuted: var(--darkTextMuted);
+	--accentCol: var(--accent);
+	--accentColBright: var(--accentBright);
+
+	/* ---------- Typography ------------------------------------------------- */
+	--fontSans: system-ui, 'Segoe UI', -apple-system, sans-serif;
+	--fontMono: 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+
+	/* ---------- Spacing scale ---------------------------------------------- */
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 24px;
+	--space-6: 32px;
+
+	/* ---------- Radii ------------------------------------------------------ */
+	--radius-sm: 4px;
+	--radius-md: 6px;
+	--radius-lg: 10px;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--text: #9ca3af;
-		--text-h: #f3f4f6;
-		--bg: #16171d;
-		--border: #2e303a;
-		--code-bg: #1f2028;
-		--accent: #c084fc;
-		--accent-bg: rgba(192, 132, 252, 0.15);
-		--accent-border: rgba(192, 132, 252, 0.5);
-		--social-bg: rgba(47, 48, 58, 0.5);
-		--shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-	}
-
-	#social .button-icon {
-		filter: invert(1) brightness(2);
-	}
+/* Re-bind semantic tokens to the light primitives. */
+body.lightTheme {
+	--bgCol: var(--lightBg);
+	--panelCol: var(--lightPanel);
+	--barCol: var(--lightBar);
+	--hoverCol: var(--lightHover);
+	--borderCol: var(--lightBorder);
+	--textCol: var(--lightText);
+	--textColMuted: var(--lightTextMuted);
 }
 
+/* =============================================================================
+ * Base layout: fill the window
+ * ============================================================================= */
+html,
+body,
 #root {
-	width: 1126px;
-	max-width: 100%;
-	margin: 0 auto;
-	text-align: center;
-	border-inline: 1px solid var(--border);
-	min-height: 100svh;
-	display: flex;
-	flex-direction: column;
-	box-sizing: border-box;
+	height: 100%;
 }
 
 body {
-	margin: 0;
+	font-family: var(--fontSans);
+	font-size: 14px;
+	color: var(--textCol);
+	background: var(--bgCol);
+	color-scheme: dark;
+}
+body.lightTheme {
+	color-scheme: light;
 }
 
-h1,
-h2 {
-	font-family: var(--heading);
-	font-weight: 500;
-	color: var(--text-h);
-}
+/* =============================================================================
+ * Element baselines — all wired to semantic tokens so themes Just Work.
+ * ============================================================================= */
 
 h1 {
-	font-size: 56px;
-	letter-spacing: -1.68px;
-	margin: 32px 0;
-	@media (max-width: 1024px) {
-		font-size: 36px;
-		margin: 20px 0;
-	}
+	font-size: 28px;
+	font-weight: 600;
+	color: var(--textCol);
 }
 h2 {
-	font-size: 24px;
-	line-height: 118%;
-	letter-spacing: -0.24px;
-	margin: 0 0 8px;
-	@media (max-width: 1024px) {
-		font-size: 20px;
-	}
+	font-size: 22px;
+	font-weight: 600;
+	color: var(--textCol);
 }
+h3 {
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--textCol);
+}
+h4 {
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--textCol);
+}
+h5 {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--textCol);
+}
+h6 {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--textColMuted);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
 p {
-	margin: 0;
+	color: var(--textCol);
 }
 
-code,
-.counter {
-	font-family: var(--mono);
-	display: inline-flex;
-	border-radius: 4px;
-	color: var(--text-h);
+small {
+	color: var(--textColMuted);
+	font-size: 12px;
 }
 
-code {
-	font-size: 15px;
-	line-height: 135%;
-	padding: 4px 8px;
-	background: var(--code-bg);
+label {
+	color: var(--textColMuted);
+	font-size: 13px;
+}
+
+a {
+	color: var(--accentCol);
+}
+a:hover {
+	color: var(--accentColBright);
+	text-decoration: underline;
+}
+
+/* ---------- Buttons ---------------------------------------------------- */
+button {
+	padding: var(--space-2) var(--space-4);
+	border-radius: var(--radius-sm);
+	background: var(--panelCol);
+	color: var(--textCol);
+	font-size: 13px;
+	transition:
+		background 0.15s ease,
+		color 0.15s ease;
+}
+button:hover:not(:disabled) {
+	background: var(--hoverCol);
+}
+button:focus-visible {
+	outline: 2px solid var(--accentCol);
+	outline-offset: 1px;
+}
+button:disabled {
+	color: var(--textColMuted);
+	opacity: 0.6;
+}
+
+/* Accent variant — usage: <button className="primary"> */
+button.primary {
+	background: var(--accentCol);
+	color: #fff;
+}
+button.primary:hover:not(:disabled) {
+	background: var(--accentColBright);
+}
+
+/* ---------- Form fields ------------------------------------------------ */
+input,
+textarea,
+select {
+	padding: var(--space-2) var(--space-3);
+	background: var(--panelCol);
+	color: var(--textCol);
+	border: 1px solid var(--borderCol);
+	border-radius: var(--radius-sm);
+	font-size: 13px;
+	transition: border-color 0.15s ease;
+}
+input::placeholder,
+textarea::placeholder {
+	color: var(--textColMuted);
+}
+input:focus,
+textarea:focus,
+select:focus {
+	outline: none;
+	border-color: var(--accentCol);
 }

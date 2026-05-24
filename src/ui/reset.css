@@ -1,0 +1,144 @@
+/* =============================================================================
+ * Modern CSS reset — defensive baseline to eliminate user-agent inconsistencies.
+ * Strictly normalization: no fonts, no colors, no spacing decisions.
+ * Distilled from Josh Comeau / Andy Bell / Eric Meyer with extra fixes for forms.
+ * ============================================================================= */
+
+/* Box-sizing for everything, including pseudo-elements. */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* Wipe browser default margins/paddings everywhere. */
+* {
+	margin: 0;
+	padding: 0;
+}
+
+/* Prevent mobile font-size inflation on landscape rotation. */
+html {
+	-moz-text-size-adjust: none;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+}
+
+/* Sensible body defaults. `100svh` accounts for mobile dynamic toolbars. */
+body {
+	min-height: 100svh;
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+/* Tighter line-height for headings and form controls. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+label {
+	line-height: 1.1;
+}
+
+/* Neutralize default heading scale; choose sizing per design system later.
+   `text-wrap: balance` prevents lonely orphan words on multi-line headings. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	text-wrap: balance;
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+/* Long words break instead of overflowing the container. */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	overflow-wrap: break-word;
+}
+
+/* Media behaves like a block by default and never overflows its container. */
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+/* Form controls must inherit typography & color — browsers don't do this. */
+input,
+button,
+textarea,
+select {
+	font: inherit;
+	color: inherit;
+}
+
+/* Strip default button chrome (border, background, native focus ring). */
+button {
+	background: none;
+	border: none;
+	cursor: pointer;
+}
+button:disabled {
+	cursor: not-allowed;
+}
+
+/* Strip default input chrome so it doesn't inherit a UA-themed background. */
+input,
+textarea,
+select {
+	background: none;
+	border: none;
+}
+
+/* Sensible textarea defaults: vertical-only resize, minimum height when unset. */
+textarea {
+	resize: vertical;
+}
+textarea:not([rows]) {
+	min-height: 10em;
+}
+
+/* Strip list markers. Re-enable per component where needed. */
+ul,
+ol {
+	list-style: none;
+}
+
+/* Anchors inherit color & lose the underline by default. */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* Collapse table borders so a freshly-built table actually looks like one. */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* Anchored scroll targets shouldn't tuck under a sticky header. */
+:target {
+	scroll-margin-block: 5ex;
+}
+
+/* Establish a stacking context at the app root so portals can't escape. */
+#root {
+	isolation: isolate;
+}
