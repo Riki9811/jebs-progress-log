@@ -2,7 +2,7 @@
 	"appId": "com.r-mariotti.jebs-progress-log",
 	"files": ["dist-electron", "dist-react"],
 	"extraResources": ["dist-electron/preload.cjs"],
-	"icon": "./desktopIcon.png",
+	"icon": "./desktopIcon.svg",
 	"mac": {
 		"target": "dmg"
 	},

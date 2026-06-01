@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="desktopIcon.png" alt="Jeb's Progress Log logo" height="100">
+    <img src="desktopIcon.svg" alt="Jeb's Progress Log logo" height="100">
 
 # Jeb's Progress Log
 
