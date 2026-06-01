@@ -1,0 +1,39 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.sectionTitle {
+	flex-shrink: 0;
+	padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--borderCol);
+}
+
+.scrollArea {
+	flex: 1;
+	min-height: 0;
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+}
+
+.item {
+	padding: var(--space-1) var(--space-3);
+	color: var(--textCol);
+	cursor: pointer;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.item:hover {
+	background: var(--hoverCol);
+}
+
+.error {
+	padding: var(--space-1) var(--space-3);
+	color: var(--textColMuted);
+}

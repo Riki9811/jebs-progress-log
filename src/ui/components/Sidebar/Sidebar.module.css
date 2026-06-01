@@ -1,0 +1,29 @@
+.root {
+	position: relative;
+	min-width: 20vw;
+	max-width: 80vw;
+	flex-shrink: 0;
+	background: var(--panelCol);
+	border-right: 1px solid var(--borderCol);
+}
+
+.body {
+	height: 100%;
+	overflow: hidden;
+}
+
+.handle {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 4px;
+	height: 100%;
+	cursor: ew-resize;
+	background: transparent;
+	transition: background 0.15s ease;
+}
+
+.handle:hover,
+.handle.dragging {
+	background: var(--accentCol);
+}
