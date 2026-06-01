@@ -1,0 +1,12 @@
+.root {
+	padding: 0;
+	background: transparent;
+	border-radius: 0;
+	font-size: inherit;
+	transition: background-color 0.15s ease;
+}
+
+.root:hover:not(:disabled) {
+	background: var(--panelCol);
+	color: var(--textCol);
+}

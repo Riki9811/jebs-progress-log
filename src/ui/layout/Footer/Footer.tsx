@@ -1,3 +1,4 @@
+import ThemeToggle from '../../components/ThemeToggle/ThemeToggle'
 import styles from './Footer.module.css'
 
 type Props = {
@@ -7,7 +8,8 @@ type Props = {
 function Footer({ savesCount }: Props) {
 	return (
 		<footer className={styles.root}>
-			<span>{savesCount} save(s) loaded</span>
+			<span className={styles.selfCenter}>{savesCount} save(s) loaded</span>
+			<ThemeToggle className={styles.toggle} />
 		</footer>
 	)
 }
