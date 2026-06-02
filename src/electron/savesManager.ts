@@ -1,4 +1,4 @@
-import { promises as fsp, constants as fsConstants, type Dirent } from 'fs'
+import { promises as fsp, constants as fsConstants, watch, type Dirent, type FSWatcher } from 'fs'
 import path from 'path'
 import { ok, err } from './result.js'
 import { extractSaveData } from './saveModel/extractSaveData.js'
@@ -120,6 +120,33 @@ export async function parseFullSave(savePath: string): Promise<Result<SaveData, 
 
 	cache.set(savePath, { mtimeMs: stats.mtimeMs, data: result.value })
 	return ok(result.value)
+}
+
+export function watchSaveFile(filePath: string, onChange: () => void, debounceMs = 1000): () => void {
+	const dir = path.dirname(filePath)
+	const fileName = path.basename(filePath)
+	let watcher: FSWatcher | null = null
+	let timer: NodeJS.Timeout | null = null
+
+	function schedule(_event: string, changed: string | null) {
+		if (changed !== null && changed !== fileName) return
+		if (timer) clearTimeout(timer)
+		timer = setTimeout(onChange, debounceMs)
+	}
+
+	// Security boundary: check that `dir` is inside the saves tree.
+	if (isInsideSavesRoot(dir)) {
+		try {
+			watcher = watch(dir, schedule)
+		} catch {
+			// Directory missing or unreadable: nothing to watch.
+		}
+	}
+
+	return () => {
+		if (timer) clearTimeout(timer)
+		watcher?.close()
+	}
 }
 
 function toSummary(data: SaveData): SaveSummary {

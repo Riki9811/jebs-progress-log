@@ -3,19 +3,16 @@ import { getPreloadPath, getUIPath } from './pathResolver.js'
 import { getBootTheme, getPreferences, setPreference } from './preferences.js'
 import { getReferenceData } from './reference/index.js'
 import { getSaveFolders, listSavesInFolder, parseFullSave } from './savesManager.js'
-import { ipcMainHandle, isDev } from './util.js'
+import { ipcMainHandle, ipcMainHandleSync, isDev } from './util.js'
 
 app.on('ready', () => {
-	const bootTheme = getBootTheme()
-
 	const mainWindow = new BrowserWindow({
 		webPreferences: {
 			preload: getPreloadPath(),
 			devTools: isDev(),
 			contextIsolation: true,
 			nodeIntegration: false,
-			sandbox: true,
-			additionalArguments: [`--boot-theme=${bootTheme}`]
+			sandbox: true
 		},
 		width: 1280,
 		height: 720
@@ -34,4 +31,5 @@ app.on('ready', () => {
 	ipcMainHandle('parseFullSave', (savePath) => parseFullSave(savePath))
 	ipcMainHandle('getPreferences', () => getPreferences())
 	ipcMainHandle('setPreference', (patch) => setPreference(patch))
+	ipcMainHandleSync('getBootTheme', () => getBootTheme())
 })

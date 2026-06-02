@@ -1,4 +1,4 @@
-import { ipcMain, WebFrameMain } from 'electron'
+import { ipcMain, WebContents, WebFrameMain } from 'electron'
 import { pathToFileURL } from 'url'
 import { getUIPath } from './pathResolver.js'
 import { ok, err } from './result.js'
@@ -16,6 +16,24 @@ export function ipcMainHandle<Key extends keyof IpcInvokeMapping>(
 		if (!frameCheck.ok) return frameCheck
 		return await handler(args)
 	})
+}
+
+export function ipcMainHandleSync<Key extends keyof IpcSyncMapping>(
+	key: Key,
+	handler: (args: IpcSyncMapping[Key]['args']) => IpcSyncMapping[Key]['value']
+) {
+	ipcMain.on(key, (event, args: IpcSyncMapping[Key]['args']) => {
+		const frameCheck = validateEventFrame(event.senderFrame)
+		event.returnValue = frameCheck.ok ? handler(args) : null
+	})
+}
+
+export function ipcWebContentsSend<Key extends keyof IpcEventMapping>(
+	key: Key,
+	webContents: WebContents,
+	payload: IpcEventMapping[Key]
+) {
+	webContents.send(key, payload)
 }
 
 function validateEventFrame(frame: WebFrameMain | null): Result<void, FrameError> {
