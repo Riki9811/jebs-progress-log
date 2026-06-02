@@ -30,9 +30,7 @@ function ThemeProvider({ children }: { children: ReactNode }) {
 	}
 
 	return (
-		<ThemeContext.Provider value={{ theme, resolvedTheme, setTheme }}>
-			{children}
-		</ThemeContext.Provider>
+		<ThemeContext.Provider value={{ theme, resolvedTheme, setTheme }}>{children}</ThemeContext.Provider>
 	)
 }
 

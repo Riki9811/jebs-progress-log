@@ -8,11 +8,38 @@
 	color: var(--textCol);
 }
 
+.hasError {
+	background: var(--errorBarCol);
+	color: var(--errorBarTextCol);
+}
+
+.hasError * {
+	color: var(--errorBarTextCol) !important;
+}
+
+.hasError *:hover:not(:disabled) {
+	background: color-mix(in srgb, var(--errorBarCol) 80%, black) !important;
+}
+
+.error {
+	align-self: center;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	user-select: text;
+	cursor: text;
+}
+
 .toggle {
 	margin-left: auto;
-    padding: 0 var(--space-2);
+	padding: 0 var(--space-2);
 }
 
 .selfCenter {
-    align-self: center;
+	align-self: center;
+}
+
+.leftSpace {
+	padding-left: var(--space-3);
 }

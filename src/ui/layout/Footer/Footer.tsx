@@ -1,14 +1,17 @@
+import clsx from 'clsx'
 import ThemeToggle from '../../components/ThemeToggle/ThemeToggle'
 import styles from './Footer.module.css'
 
 type Props = {
 	savesCount: number
+	error?: string
 }
 
-function Footer({ savesCount }: Props) {
+function Footer({ savesCount, error }: Props) {
 	return (
-		<footer className={styles.root}>
-			<span className={styles.selfCenter}>{savesCount} save(s) loaded</span>
+		<footer className={error ? `${styles.root} ${styles.hasError}` : styles.root}>
+			{error && <span className={styles.error}>{error}</span>}
+			<span className={clsx(styles.selfCenter, error && styles.leftSpace)}>{savesCount} save(s) loaded</span>
 			<ThemeToggle className={styles.toggle} />
 		</footer>
 	)

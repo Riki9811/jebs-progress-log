@@ -7,6 +7,6 @@
 }
 
 .root:hover:not(:disabled) {
-	background: var(--panelCol);
+	background: color-mix(in srgb, var(--bgCol) 40%, transparent);
 	color: var(--textCol);
 }

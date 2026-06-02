@@ -3,10 +3,12 @@
 // =============================================================================
 //
 // `Result<V, E>` is the generic result type for every outcome (ok/err).
-// `IpcInvokeMapping` defines per-endpoint args/value/error types (domain errors
-// from the main-process perspective).
-// `Window['electron']` derives the renderer-exposed API, inlining `FrameError`
-// into the error branch of each endpoint.
+// Three IPC channels, each with its own mapping:
+//   - `IpcInvokeMapping`  renderer -> main, async request/response (invoke/handle)
+//   - `IpcSyncMapping`    renderer -> main, synchronous request/response (sendSync)
+//   - `IpcEventMapping`   main -> renderer, fire-and-forget push (send/on)
+// `Window['electron']` derives the renderer-exposed API: invoke endpoints inline
+// `FrameError` into their error branch, event endpoints become `subscribe*` methods.
 
 type Result<V, E> = { ok: true; value: V } | { ok: false; error: E }
 
@@ -22,8 +24,9 @@ type ParseFullSaveError =
 	| { code: 'INVALID_FORMAT'; line: number; reason: string }
 	| { code: 'IO_ERROR'; reason: string }
 
-// --- Mapping ---
+// --- Mappings ---
 
+// Renderer -> Main, async request/response (ipcRenderer.invoke / ipcMain.handle)
 type IpcInvokeMapping = {
 	getSaveFolders: { args: void; value: SaveFolder[]; error: FolderAccessError }
 	getReferenceData: { args: void; value: ReferenceData; error: never }
@@ -31,6 +34,20 @@ type IpcInvokeMapping = {
 	parseFullSave: { args: string; value: SaveData; error: ParseFullSaveError }
 	getPreferences: { args: void; value: Preferences; error: never }
 	setPreference: { args: Partial<Preferences>; value: void; error: never }
+}
+
+// Renderer -> Main, synchronous request/response (ipcRenderer.sendSync / ipcMain.on).
+// Reserved for the few reads that must resolve before first paint (no FOUC).
+type IpcSyncMapping = {
+	getBootTheme: { args: void; value: Preferences['theme'] }
+}
+
+// Main -> Renderer, fire-and-forget push (webContents.send / ipcRenderer.on).
+// selectedSaveChanged fires when the on-disk file of the currently selected save
+// settles after a write, carrying its freshly parsed data. Wired but dormant
+// until save selection exists.
+type IpcEventMapping = {
+	selectedSaveChanged: SaveData
 }
 
 type MainResult<K extends keyof IpcInvokeMapping> = Result<
@@ -43,11 +60,17 @@ type RendererResult<K extends keyof IpcInvokeMapping> = Result<
 	IpcInvokeMapping[K]['error'] | FrameError
 >
 
+type UnsubscribeFn = () => void
+
 interface Window {
 	electron: {
 		[K in keyof IpcInvokeMapping]: IpcInvokeMapping[K]['args'] extends void
 			? () => Promise<RendererResult<K>>
 			: (args: IpcInvokeMapping[K]['args']) => Promise<RendererResult<K>>
+	} & {
+		[K in keyof IpcEventMapping as `subscribe${Capitalize<K>}`]: (
+			callback: (payload: IpcEventMapping[K]) => void
+		) => UnsubscribeFn
 	}
 	bootTheme: Preferences['theme'] | null
 }

@@ -5,14 +5,13 @@ import styles from './Workspace.module.css'
 
 type Props = {
 	folders: SaveFolder[]
-	err: string
 }
 
-function Workspace({ folders, err }: Props) {
+function Workspace({ folders }: Props) {
 	return (
 		<div className={styles.root}>
 			<Sidebar>
-				<FileExplorer folders={folders} err={err} />
+				<FileExplorer folders={folders} />
 			</Sidebar>
 			<SaveViewer />
 		</div>

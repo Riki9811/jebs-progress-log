@@ -29,6 +29,8 @@
 	--darkBorder: #2a323e; /* dividers, borders */
 	--darkText: #d4d7dc; /* primary text */
 	--darkTextMuted: #7c8590; /* muted/disabled text */
+	--darkError: #711919;
+	--darkErrorText: #f4d6d6;
 
 	/* Light palette */
 	--lightBg: #f2f5fa;
@@ -38,6 +40,8 @@
 	--lightBorder: #c8d4e3;
 	--lightText: #2b343f;
 	--lightTextMuted: #7d8a9c;
+	--lightError: #c0392b;
+	--lightErrorText: #fff;
 
 	/* ---------- Semantic tokens (default = dark) --------------------------- */
 	--bgCol: var(--darkBg);
@@ -49,6 +53,8 @@
 	--textColMuted: var(--darkTextMuted);
 	--accentCol: var(--accent);
 	--accentColBright: var(--accentBright);
+	--errorBarCol: var(--darkError);
+	--errorBarTextCol: var(--darkErrorText);
 
 	/* ---------- Typography ------------------------------------------------- */
 	--fontSans: system-ui, 'Segoe UI', -apple-system, sans-serif;
@@ -77,6 +83,8 @@ body.lightTheme {
 	--borderCol: var(--lightBorder);
 	--textCol: var(--lightText);
 	--textColMuted: var(--lightTextMuted);
+	--errorBarCol: var(--lightError);
+	--errorBarTextCol: var(--lightErrorText);
 }
 
 /* =============================================================================
@@ -86,7 +94,7 @@ html,
 body,
 #root {
 	height: 100%;
-    user-select: none;
+	user-select: none;
 }
 
 body {

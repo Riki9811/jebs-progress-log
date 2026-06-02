@@ -12,7 +12,7 @@ function App() {
 	useEffect(() => {
 		async function fetchData() {
 			const folderData = await window.electron.getSaveFolders()
-			if (!folderData.ok) setErr(folderData.error.code)
+			if (!folderData.ok) setErr(`getSaveFolders(): ${folderData.error.code}`)
 			else setFolders(folderData.value)
 		}
 		fetchData()
@@ -22,8 +22,8 @@ function App() {
 		<ThemeProvider>
 			<div className={styles.shell}>
 				<Header />
-				<Workspace folders={folders} err={err} />
-				<Footer savesCount={folders.length} />
+				<Workspace folders={folders} />
+				<Footer savesCount={folders.length} error={err} />
 			</div>
 		</ThemeProvider>
 	)
