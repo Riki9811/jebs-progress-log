@@ -20,15 +20,6 @@
 	flex-direction: column;
 }
 
-.item {
-	padding: var(--space-1) var(--space-3);
-	color: var(--textCol);
-	cursor: pointer;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.item:hover {
-	background: var(--hoverCol);
+.listEnd {
+	height: var(--space-6);
 }

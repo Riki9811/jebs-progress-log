@@ -71,6 +71,8 @@ export async function listSavesInFolder(
 
 	const summaries: SaveSummary[] = []
 	const errors: { fileName: string; error: ParseFullSaveError }[] = []
+	// REMIND: this parses each .sfs sequentially. If unfold latency on large saves
+	// becomes noticeable, parallelize this loop with Promise.all like getSaveFolders.
 	for (const e of r.value) {
 		if (!e.isFile() || !e.name.endsWith('.sfs')) continue
 		const filePath = path.join(folderPath, e.name)

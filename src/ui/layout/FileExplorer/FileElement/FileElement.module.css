@@ -1,0 +1,41 @@
+.root {
+    position: relative;
+	display: flex;
+	flex-direction: column;
+	padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3);
+    border-left: 1px solid var(--textColMuted);
+    cursor: pointer;
+}
+
+.root:hover:not(:disabled) {
+	background: var(--hoverCol);
+}
+
+.name {
+	font-weight: 600;
+	color: var(--textCol);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.meta {
+	font-size: 12px;
+	color: var(--textColMuted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.hoverCaret {
+    position: absolute;
+    display: none;
+    color: var(--textColMuted);
+    top: 50%;
+    right: var(--space-1);
+    transform: translateY(-50%);
+}
+
+.root:hover:not(:disabled) > .hoverCaret {
+    display: block;
+}

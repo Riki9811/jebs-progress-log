@@ -1,0 +1,79 @@
+.root {
+	display: flex;
+	flex-direction: column;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	width: 100%;
+	padding: var(--space-2) var(--space-3);
+	background: transparent;
+	border-radius: 0;
+	text-align: left;
+}
+
+.header:hover:not(:disabled) {
+	background: var(--hoverCol);
+}
+
+.caret {
+	flex-shrink: 0;
+	width: 12px;
+	color: var(--textColMuted);
+	transition: transform 0.2s ease;
+}
+
+.caretOpen {
+	transform: rotate(90deg);
+}
+
+.name {
+	font-weight: 600;
+	color: var(--textCol);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.metaInfo {
+	display: flex;
+	align-items: center;
+	gap: var(--space-1);
+	margin-left: auto;
+	padding-left: var(--space-2);
+	flex-shrink: 0;
+	font-size: 12px;
+	color: var(--textColMuted);
+}
+
+/* grid-template-rows collapse: animates to content height with no JS measuring. */
+.body {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows 0.2s ease;
+}
+
+.bodyOpen {
+	grid-template-rows: 1fr;
+    margin-bottom: var(--space-2);
+}
+
+/* Required wrapper: clips children to the collapsing track while folded. */
+.bodyInner {
+	overflow: hidden;
+	padding-left: calc(var(--space-4) + 1px);
+}
+
+.bodyInner > :last-child {
+	border-bottom: 1px solid var(--textColMuted);
+    border-bottom-left-radius: var(--radius-md);
+}
+
+.note {
+	padding: var(--space-2) var(--space-3);
+	font-size: 12px;
+	color: var(--textColMuted);
+    border-left: 1px solid var(--textColMuted);
+}
