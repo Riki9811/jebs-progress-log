@@ -7,16 +7,16 @@ import { useError } from './hooks/useError'
 
 function App() {
 	const [folders, setFolders] = useState<SaveFolder[]>([])
-	const [err, setErr] = useState('')
+	const { setError } = useError()
 
 	useEffect(() => {
 		async function fetchData() {
 			const folderData = await window.electron.getSaveFolders()
-			if (!folderData.ok) setErr(`getSaveFolders(): ${folderData.error.code}`)
+			if (!folderData.ok) setError(`getSaveFolders(): ${folderData.error.code}`)
 			else setFolders(folderData.value)
 		}
 		fetchData()
-	}, [])
+	}, [setError])
 
 	return (
 		<div className={styles.shell}>

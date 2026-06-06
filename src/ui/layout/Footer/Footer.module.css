@@ -17,10 +17,6 @@
 	color: var(--errorBarTextCol) !important;
 }
 
-.hasError *:hover:not(:disabled) {
-	background: color-mix(in srgb, var(--errorBarCol) 80%, black) !important;
-}
-
 .error {
 	align-self: center;
 	font-weight: 600;
