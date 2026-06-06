@@ -3,7 +3,7 @@ import styles from './App.module.css'
 import Header from './layout/Header/Header'
 import Footer from './layout/Footer/Footer'
 import Workspace from './layout/Workspace/Workspace'
-import ThemeProvider from './context/ThemeProvider'
+import { useError } from './hooks/useError'
 
 function App() {
 	const [folders, setFolders] = useState<SaveFolder[]>([])
@@ -19,13 +19,11 @@ function App() {
 	}, [])
 
 	return (
-		<ThemeProvider>
-			<div className={styles.shell}>
-				<Header />
-				<Workspace folders={folders} />
-				<Footer savesCount={folders.length} error={err} />
-			</div>
-		</ThemeProvider>
+		<div className={styles.shell}>
+			<Header />
+			<Workspace folders={folders} />
+			<Footer savesCount={folders.length} />
+		</div>
 	)
 }
 

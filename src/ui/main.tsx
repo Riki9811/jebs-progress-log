@@ -14,6 +14,10 @@ config.autoAddCss = false
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
-		<App />
+		<ThemeProvider>
+			<ErrorProvider>
+				<App />
+			</ErrorProvider>
+		</ThemeProvider>
 	</StrictMode>
 )
