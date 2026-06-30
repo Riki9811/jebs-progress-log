@@ -1,0 +1,24 @@
+/* Two panels on a 200%-wide track inside the sidebar's overflow:hidden body.
+   `detail` slides the track left by one panel width. */
+.slider {
+	display: flex;
+	width: 200%;
+	height: 100%;
+	transition: transform 0.3s ease;
+}
+
+.slider > * {
+	flex: 0 0 50%;
+	min-width: 0;
+	height: 100%;
+}
+
+.detail {
+	transform: translateX(-50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.slider {
+		transition: none;
+	}
+}

@@ -1,20 +1,27 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './FileElement.module.css'
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons'
+import { useSaveActions } from '../../../hooks/useSaveActions'
 
 type Props = {
 	summary: SaveSummary
 }
 
 function FileElement({ summary }: Props) {
+	const { select } = useSaveActions()
 	return (
-		<div className={styles.root} title={summary.fileName}>
+		<button
+			type="button"
+			className={styles.root}
+			title={summary.fileName}
+			onClick={() => select(summary)}
+		>
 			<span className={styles.name}>{summary.fileName}</span>
 			<span className={styles.meta}>
 				Science: {summary.totalScience.toFixed(1)} | Experiments: {summary.experimentCount}
 			</span>
 			<FontAwesomeIcon icon={faCaretRight} className={styles.hoverCaret}/>
-		</div>
+		</button>
 	)
 }
 

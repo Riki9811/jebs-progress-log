@@ -12,4 +12,4 @@ export function getUIPath(): string {
 }
 
 // Hard-coded placeholder: automatic KSP install directory detection is not yet implemented.
-export const KSP_INSTALL_DIR = 'D:\\Steam\\steamapps\\common\\Kerbal Space Program'
+export const KSP_INSTALL_DIR = '/Users/riccardo/Documents/Riccardo/KSP'

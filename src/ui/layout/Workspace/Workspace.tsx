@@ -1,6 +1,7 @@
 import Sidebar from '../../components/Sidebar/Sidebar'
-import FileExplorer from '../FileExplorer/FileExplorer'
+import SidebarPanels from '../SidebarPanels/SidebarPanels'
 import SaveViewer from '../SaveViewer/SaveViewer'
+import SelectedSaveProvider from '../../context/SelectedSaveProvider'
 import styles from './Workspace.module.css'
 
 type Props = {
@@ -9,12 +10,14 @@ type Props = {
 
 function Workspace({ folders }: Props) {
 	return (
-		<div className={styles.root}>
-			<Sidebar>
-				<FileExplorer folders={folders} />
-			</Sidebar>
-			<SaveViewer />
-		</div>
+		<SelectedSaveProvider>
+			<div className={styles.root}>
+				<Sidebar>
+					<SidebarPanels folders={folders} />
+				</Sidebar>
+				<SaveViewer />
+			</div>
+		</SelectedSaveProvider>
 	)
 }
 

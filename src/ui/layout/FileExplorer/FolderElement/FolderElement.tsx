@@ -39,7 +39,7 @@ function FolderElement({ folder, open, load, onToggle }: Props) {
 				<span className={styles.name}>{folder.name}</span>
 				{persistent && (
 					<span className={styles.metaInfo}>
-						<FontAwesomeIcon icon={modeIcon[persistent.mode]} title={persistent.mode} />
+						<FontAwesomeIcon icon={modeIcon[persistent.mode]} aria-label={persistent.mode} />
 						<span>v{persistent.gameVersion}</span>
 					</span>
 				)}

@@ -1,0 +1,68 @@
+.spinner {
+	margin: auto;
+	color: var(--textColMuted);
+}
+
+.note {
+	margin: auto;
+	padding: var(--space-3);
+	text-align: center;
+	color: var(--textColMuted);
+}
+
+.scrollBox {
+	margin-top: var(--space-3);
+}
+
+.sectionLabel {
+	margin: 0;
+	padding: var(--space-3) var(--space-3) var(--space-1);
+	color: var(--textColMuted);
+}
+
+.visitedLabel {
+	padding-top: 0;
+}
+
+.bodyRow {
+	display: flex;
+	align-items: center;
+	padding: var(--space-1) var(--space-3);
+	padding-left: var(--space-5);
+}
+
+.bodyName {
+	flex-shrink: 0;
+	width: 72px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.bar {
+	flex: 1;
+	height: 8px;
+	background: var(--hoverCol);
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.barFill {
+	height: 100%;
+	background: var(--accentCol);
+	border-radius: 4px;
+}
+
+.bodyPct {
+	flex-shrink: 0;
+	width: 36px;
+	text-align: right;
+	font-size: 12px;
+	font-variant-numeric: tabular-nums;
+	color: var(--textColMuted);
+}
+
+.exploreRow {
+	padding: var(--space-1) var(--space-3);
+	padding-left: var(--space-5);
+}

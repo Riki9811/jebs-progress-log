@@ -198,6 +198,7 @@ type RecoveryStats = {
 type BodyStats = {
 	body: string
 	scienceCollected: number
+	scienceTotal: number
 	experimentCount: number
 	perSituation: Partial<Record<StandardSituation, SituationStats>>
 	deployedPerSituation: Partial<Record<StandardSituation, SituationStats>>

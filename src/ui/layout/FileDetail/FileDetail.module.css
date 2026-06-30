@@ -1,0 +1,98 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.backRow {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	width: 100%;
+	padding: var(--space-2) var(--space-3);
+	font: inherit;
+	text-align: left;
+	background: none;
+	border: none;
+	border-radius: 0;
+	border-bottom: 1px solid var(--borderCol);
+	color: var(--textColMuted);
+	cursor: pointer;
+}
+
+.backRow:hover {
+	color: var(--textCol);
+}
+
+.general {
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-1);
+	padding: var(--space-3);
+    user-select: text;
+}
+
+.path {
+	display: flex;
+	align-items: center;
+	gap: var(--space-1);
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.folder {
+	color: var(--textColMuted);
+}
+
+.sep {
+	color: var(--textColMuted);
+}
+
+.file {
+	font-weight: 600;
+	color: var(--textCol);
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.modeLine,
+.stats {
+	display: flex;
+	align-items: center;
+	gap: var(--space-1);
+	font-size: 13px;
+	color: var(--textColMuted);
+}
+
+.search {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	margin: var(--space-3);
+	padding: var(--space-2);
+	border: 1px solid var(--borderCol);
+	border-radius: 6px;
+	cursor: text;
+}
+
+.searchIcon {
+	color: var(--textColMuted);
+}
+
+.searchInput {
+	flex: 1;
+	min-width: 0;
+	font: inherit;
+	background: none;
+	border: none;
+	outline: none;
+	color: var(--textCol);
+	padding: 0;
+}
+
+.searchInput::placeholder {
+	color: var(--textColMuted);
+}

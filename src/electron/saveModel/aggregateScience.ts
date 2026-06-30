@@ -18,12 +18,18 @@ export function buildAggregations(records: ScienceRecord[]): SaveAggregations {
 		const body = (perBody[record.body] ??= {
 			body: record.body,
 			scienceCollected: 0,
+			scienceTotal: 0,
 			experimentCount: 0,
 			perSituation: {},
 			deployedPerSituation: {},
 			recoveries: {}
 		})
 		body.scienceCollected += record.collected
+		// TODO: scienceTotal is the cap summed over discovered records only — i.e.
+		// completion of what's been started. Replace with the body's theoretical
+		// maximum (experiments x situations x biomes from reference) when that
+		// (heavy) computation lands.
+		body.scienceTotal += record.total
 		body.experimentCount += 1
 
 		if (RECOVERY_SET.has(record.situation)) {
