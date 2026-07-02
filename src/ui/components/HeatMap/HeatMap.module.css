@@ -1,0 +1,66 @@
+.table {
+	border-collapse: separate;
+	border-spacing: 0;
+	font-size: 12px;
+}
+
+/* Shrink mode: force the table into its container's width, columns share the
+   space and their content ellipsises instead of overflowing into a scroll. */
+.table.shrink {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.shrink .headCell,
+.shrink .rowHead {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Drop the cell floor so columns can compress past it and truly fit the width. */
+.shrink .cell {
+	min-width: 0;
+}
+
+.headCell,
+.rowHead {
+	position: sticky;
+	background: var(--panelCol);
+	font-weight: 600;
+	border: 1px solid var(--borderCol);
+	padding: var(--space-1) var(--space-2);
+	white-space: nowrap;
+}
+
+.headCell {
+	top: 0;
+	z-index: 1;
+	text-align: center;
+	color: var(--textColMuted);
+}
+
+.rowHead {
+	left: 0;
+	text-align: left;
+	color: var(--textCol);
+}
+
+/* Top-left cell stays pinned to both edges, above the other sticky headers. */
+.corner {
+	left: 0;
+	z-index: 2;
+}
+
+/* Pin the row-header column width in shrink mode so body names keep room and only
+   the value columns share the remaining space. */
+.shrink .corner {
+	width: 88px;
+}
+
+.cell {
+	padding: 0;
+	height: 28px;
+	min-width: 56px;
+	overflow: hidden;
+	border: 1px solid var(--borderCol);
+}

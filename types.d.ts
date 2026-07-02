@@ -39,15 +39,14 @@ type IpcInvokeMapping = {
 // Renderer -> Main, synchronous request/response (ipcRenderer.sendSync / ipcMain.on).
 // Reserved for the few reads that must resolve before first paint (no FOUC).
 type IpcSyncMapping = {
-	getBootTheme: { args: void; value: Preferences['theme'] }
+	getBootPreferences: { args: void; value: Preferences }
 }
 
 // Main -> Renderer, fire-and-forget push (webContents.send / ipcRenderer.on).
-// selectedSaveChanged fires when the on-disk file of the currently selected save
-// settles after a write, carrying its freshly parsed data. Wired but dormant
-// until save selection exists.
+// settingsChanged fires when a preference is toggled from the app menu (e.g. the
+// sidebar or table-fit menu items), carrying the patch to merge into the renderer.
 type IpcEventMapping = {
-	selectedSaveChanged: SaveData
+	settingsChanged: Partial<Preferences>
 }
 
 type MainResult<K extends keyof IpcInvokeMapping> = Result<
@@ -72,7 +71,7 @@ interface Window {
 			callback: (payload: IpcEventMapping[K]) => void
 		) => UnsubscribeFn
 	}
-	bootTheme: Preferences['theme'] | null
+	bootPreferences: Preferences
 }
 
 // #region Game data types
@@ -222,6 +221,13 @@ type ListSavesResult = {
 
 // #endregion
 
+// 'scroll' = tables keep full content width and scroll horizontally; 'shrink' =
+// columns compress to fit the available width, truncating text with ellipsis.
+type TableFit = 'scroll' | 'shrink'
+
 type Preferences = {
 	theme: 'system' | 'dark' | 'light'
+	sidebarVisible: boolean
+	sidebarWidth: number
+	tableFit: TableFit
 }

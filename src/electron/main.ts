@@ -1,8 +1,9 @@
 import { app, BrowserWindow } from 'electron'
 import { getPreloadPath, getUIPath } from './pathResolver.js'
-import { getBootTheme, getPreferences, setPreference } from './preferences.js'
+import { getBootPreferences, getPreferences, setPreference } from './preferences.js'
 import { getReferenceData } from './reference/index.js'
 import { getSaveFolders, listSavesInFolder, parseFullSave } from './savesManager.js'
+import { buildAppMenu } from './menu.js'
 import { ipcMainHandle, ipcMainHandleSync, isDev } from './util.js'
 
 app.on('ready', () => {
@@ -25,11 +26,13 @@ app.on('ready', () => {
 		mainWindow.loadFile(getUIPath())
 	}
 
+	buildAppMenu(mainWindow)
+
 	ipcMainHandle('getSaveFolders', () => getSaveFolders())
 	ipcMainHandle('getReferenceData', () => getReferenceData())
 	ipcMainHandle('listSavesInFolder', (folderPath) => listSavesInFolder(folderPath))
 	ipcMainHandle('parseFullSave', (savePath) => parseFullSave(savePath))
 	ipcMainHandle('getPreferences', () => getPreferences())
 	ipcMainHandle('setPreference', (patch) => setPreference(patch))
-	ipcMainHandleSync('getBootTheme', () => getBootTheme())
+	ipcMainHandleSync('getBootPreferences', () => getBootPreferences())
 })

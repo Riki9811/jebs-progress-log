@@ -16,7 +16,9 @@ function getSystemTheme(): ResolvedTheme {
 }
 
 function ThemeProvider({ children }: { children: ReactNode }) {
-	const [theme, setThemeState] = useState<Preferences['theme']>(() => window.bootTheme ?? 'system')
+	const [theme, setThemeState] = useState<Preferences['theme']>(
+		() => window.bootPreferences?.theme ?? 'system'
+	)
 	const systemTheme = useSyncExternalStore(subscribeToSystemTheme, getSystemTheme)
 	const resolvedTheme: ResolvedTheme = theme === 'system' ? systemTheme : theme
 

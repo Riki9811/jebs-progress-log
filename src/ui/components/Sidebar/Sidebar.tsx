@@ -4,12 +4,22 @@ import styles from './Sidebar.module.css'
 type Props = {
 	children: ReactNode
 	initialWidth?: number
+	// Called with the final width when a resize drag ends (for persistence).
+	onWidthCommit?: (width: number) => void
 }
 
-function Sidebar({ children, initialWidth = 260 }: Props) {
+function Sidebar({ children, initialWidth = 260, onWidthCommit }: Props) {
 	const ref = useRef<HTMLElement>(null)
 	const [width, setWidth] = useState(initialWidth)
 	const [dragging, setDragging] = useState(false)
+	// Latest width + commit callback, read in onUp (which closes over stale values)
+	// so the drag effect needn't depend on them and re-bind listeners mid-drag.
+	const widthRef = useRef(width)
+	const commitRef = useRef(onWidthCommit)
+	useEffect(() => {
+		widthRef.current = width
+		commitRef.current = onWidthCommit
+	})
 
 	useEffect(() => {
 		if (!dragging) return
@@ -27,6 +37,7 @@ function Sidebar({ children, initialWidth = 260 }: Props) {
 		}
 		function onUp() {
 			setDragging(false)
+			commitRef.current?.(widthRef.current)
 		}
 
 		document.body.style.cursor = 'ew-resize'

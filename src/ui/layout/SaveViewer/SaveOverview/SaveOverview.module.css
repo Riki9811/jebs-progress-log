@@ -1,0 +1,41 @@
+.root {
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Single vertical scroll for the whole overview (both tables + stats). Each table
+   gets its own horizontal scroll, so the section titles stay outside any scroll. */
+.scroll {
+	flex: 1;
+	min-height: 0;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-5);
+	padding: var(--space-5);
+}
+
+.sectionLabel {
+	margin: 0 0 var(--space-2);
+	color: var(--textColMuted);
+}
+
+.stats {
+	align-self: center;
+	margin: 0;
+	padding: 0;
+	list-style: unset;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-1);
+	color: var(--textColMuted);
+}
+
+.hint {
+	color: var(--textColMuted);
+}

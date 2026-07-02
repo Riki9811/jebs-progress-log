@@ -1,10 +1,6 @@
 import electron from 'electron'
 
-const raw = ipcInvokeSync('getBootTheme', undefined)
-const bootTheme: Preferences['theme'] | null =
-	raw === 'system' || raw === 'dark' || raw === 'light' ? raw : null
-
-electron.contextBridge.exposeInMainWorld('bootTheme', bootTheme)
+electron.contextBridge.exposeInMainWorld('bootPreferences', ipcInvokeSync('getBootPreferences', undefined))
 
 electron.contextBridge.exposeInMainWorld('electron', {
 	getSaveFolders: () => ipcInvoke('getSaveFolders', undefined),
@@ -13,7 +9,7 @@ electron.contextBridge.exposeInMainWorld('electron', {
 	parseFullSave: (savePath) => ipcInvoke('parseFullSave', savePath),
 	getPreferences: () => ipcInvoke('getPreferences', undefined),
 	setPreference: (patch) => ipcInvoke('setPreference', patch),
-	subscribeSelectedSaveChanged: (callback) => ipcOn('selectedSaveChanged', callback)
+	subscribeSettingsChanged: (callback) => ipcOn('settingsChanged', callback)
 } satisfies Window['electron'])
 
 function ipcInvoke<Key extends keyof IpcInvokeMapping>(

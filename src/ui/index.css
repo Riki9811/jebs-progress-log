@@ -21,6 +21,11 @@
 	--accentBright: #5d96e8;
 	--accentSoft: rgba(72, 127, 214, 0.15);
 
+	/* Value-cell fill scale (full / half / empty) — shared between themes */
+	--fillHigh: #3fae5a;
+	--fillMid: #e8c23d;
+	--fillLow: #dc5146;
+
 	/* Dark palette */
 	--darkBg: #1a1f26; /* main canvas (editor area) */
 	--darkPanel: #1f252e; /* sidebars, elevated panels */

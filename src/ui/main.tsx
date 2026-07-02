@@ -7,6 +7,7 @@ import './index.css'
 import App from './App.tsx'
 import ThemeProvider from './context/ThemeProvider'
 import ErrorProvider from './context/ErrorProvider'
+import SettingsProvider from './context/SettingsProvider'
 
 // Insert FontAwesome's CSS via the bundler instead of letting it inject a <style>
 // tag at runtime, so the stylesheet order is deterministic and under our control.
@@ -16,7 +17,9 @@ createRoot(document.getElementById('root')!).render(
 	<StrictMode>
 		<ThemeProvider>
 			<ErrorProvider>
-				<App />
+				<SettingsProvider>
+					<App />
+				</SettingsProvider>
 			</ErrorProvider>
 		</ThemeProvider>
 	</StrictMode>
