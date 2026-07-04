@@ -21,4 +21,18 @@ export class LruCache<K, V> {
 			if (oldest !== undefined) this.map.delete(oldest)
 		}
 	}
+
+	// Read-only introspection (debug tooling). Unlike `get`, none of these
+	// refresh LRU order.
+	get size(): number {
+		return this.map.size
+	}
+
+	get capacity(): number {
+		return this.max
+	}
+
+	entries(): [K, V][] {
+		return [...this.map.entries()]
+	}
 }

@@ -4,6 +4,7 @@ import { getBootPreferences, getPreferences, setPreference } from './preferences
 import { getReferenceData } from './reference/index.js'
 import { getSaveFolders, listSavesInFolder, parseFullSave } from './savesManager.js'
 import { buildAppMenu } from './menu.js'
+import { registerDebugHandlers } from './debug.js'
 import { ipcMainHandle, ipcMainHandleSync, isDev } from './util.js'
 
 app.on('ready', () => {
@@ -35,4 +36,7 @@ app.on('ready', () => {
 	ipcMainHandle('getPreferences', () => getPreferences())
 	ipcMainHandle('setPreference', (patch) => setPreference(patch))
 	ipcMainHandleSync('getBootPreferences', () => getBootPreferences())
+
+	// Debug channels exist only in dev; never registered in production builds.
+	if (isDev()) registerDebugHandlers(mainWindow)
 })

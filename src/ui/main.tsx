@@ -13,6 +13,12 @@ import SettingsProvider from './context/SettingsProvider'
 // tag at runtime, so the stylesheet order is deterministic and under our control.
 config.autoAddCss = false
 
+// Dev-only console tools (window.debug.*). The guard is statically false in
+// production builds, so Vite drops both the branch and the imported module.
+if (import.meta.env.DEV) {
+	import('./debug/devConsole').then((m) => m.installDebugConsole())
+}
+
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
 		<ThemeProvider>

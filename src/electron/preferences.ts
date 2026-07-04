@@ -15,6 +15,17 @@ export function getPreferences(): MainResult<'getPreferences'> {
 	return ok(store.store)
 }
 
+// Dev-only introspection: the persisted store plus the path of its backing file.
+export function getSettingsDebugInfo(): DebugSettings {
+	return { ...store.store, path: store.path }
+}
+
+// Dev-only: fires on any persisted change, whatever the origin (renderer update
+// or menu toggle) — store.set is the single funnel for all writes.
+export function subscribeSettingsDebug(listener: () => void): void {
+	store.onDidAnyChange(listener)
+}
+
 export function setPreference(patch: Partial<Preferences>): MainResult<'setPreference'> {
 	for (const [key, value] of Object.entries(patch)) {
 		store.set(key as keyof Preferences, value as Preferences[keyof Preferences])

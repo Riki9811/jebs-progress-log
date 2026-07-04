@@ -49,6 +49,37 @@ type IpcEventMapping = {
 	settingsChanged: Partial<Preferences>
 }
 
+// --- Dev-only debug channel ---
+// Registered in main and exposed by the preload ONLY when NODE_ENV=dev; the
+// renderer console API is additionally stripped from prod bundles by Vite
+// (import.meta.env.DEV). None of these channels exist in a production build.
+
+type DebugSettings = Preferences & { path: string }
+
+type DebugCacheEntry = {
+	path: string
+	mtimeMs: number
+	fileName: string
+	folderName: string
+	gameVersion: string
+	mode: GameMode
+	totalScience: number
+	experimentCount: number
+	records: number
+	bodies: number
+}
+
+type DebugCache = { max: number; size: number; entries: DebugCacheEntry[] }
+
+type IpcDebugMapping = {
+	'debug:getSettings': DebugSettings
+	'debug:getCache': DebugCache
+}
+
+// Payload of the dev-only `debug:changed` push: which store just mutated. The
+// renderer then re-fetches and diffs against its own snapshot.
+type DebugChangedKind = 'settings' | 'cache'
+
 type MainResult<K extends keyof IpcInvokeMapping> = Result<
 	IpcInvokeMapping[K]['value'],
 	IpcInvokeMapping[K]['error']
@@ -72,6 +103,21 @@ interface Window {
 		) => UnsubscribeFn
 	}
 	bootPreferences: Preferences
+	// Dev-only raw bridge to the debug IPC channels; absent in production.
+	electronDebug?: {
+		getSettings: () => Promise<DebugSettings>
+		getCache: () => Promise<DebugCache>
+		onChanged: (callback: (kind: DebugChangedKind) => void) => UnsubscribeFn
+	}
+	// Dev-only console API installed by the renderer (see src/ui/debug/devConsole.ts).
+	debug?: {
+		settings: () => Promise<DebugSettings>
+		cache: () => Promise<DebugCache>
+		help: () => void
+		// Assign true/false in the console to toggle live change logging.
+		listenSettingsEvents: boolean
+		listenCacheEvents: boolean
+	}
 }
 
 // #region Game data types

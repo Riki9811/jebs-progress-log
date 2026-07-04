@@ -28,6 +28,20 @@ export function ipcMainHandleSync<Key extends keyof IpcSyncMapping>(
 	})
 }
 
+// Dev-only mirror of ipcMainHandle for the debug channels: same frame validation,
+// but the payload is returned bare (no Result wrapper). Only called from debug.ts,
+// which main registers exclusively under isDev() — these channels never exist in
+// a production build.
+export function ipcMainHandleDebug<Key extends keyof IpcDebugMapping>(
+	key: Key,
+	handler: () => IpcDebugMapping[Key]
+) {
+	ipcMain.handle(key, (event) => {
+		const frameCheck = validateEventFrame(event.senderFrame)
+		return frameCheck.ok ? handler() : null
+	})
+}
+
 export function ipcWebContentsSend<Key extends keyof IpcEventMapping>(
 	key: Key,
 	webContents: WebContents,

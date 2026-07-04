@@ -12,6 +12,21 @@ electron.contextBridge.exposeInMainWorld('electron', {
 	subscribeSettingsChanged: (callback) => ipcOn('settingsChanged', callback)
 } satisfies Window['electron'])
 
+// Dev-only debug bridge: not exposed in production, mirroring the handlers that
+// main only registers under isDev(). Channels are outside IpcInvokeMapping on
+// purpose — the production IPC contract stays untouched.
+if (process.env.NODE_ENV === 'dev') {
+	electron.contextBridge.exposeInMainWorld('electronDebug', {
+		getSettings: () => electron.ipcRenderer.invoke('debug:getSettings'),
+		getCache: () => electron.ipcRenderer.invoke('debug:getCache'),
+		onChanged: (callback: (kind: DebugChangedKind) => void) => {
+			const listener = (_: Electron.IpcRendererEvent, kind: DebugChangedKind) => callback(kind)
+			electron.ipcRenderer.on('debug:changed', listener)
+			return () => electron.ipcRenderer.off('debug:changed', listener)
+		}
+	} satisfies NonNullable<Window['electronDebug']>)
+}
+
 function ipcInvoke<Key extends keyof IpcInvokeMapping>(
 	key: Key,
 	args: IpcInvokeMapping[Key]['args']

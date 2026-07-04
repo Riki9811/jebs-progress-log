@@ -10,6 +10,14 @@ const SAVES_ROOT = path.resolve(KSP_INSTALL_DIR, 'saves')
 
 const cache = new LruCache<string, { mtimeMs: number; data: SaveData }>(16)
 
+// Dev-only hook: notified after any cache content change (parseFullSave is the
+// only writer; set + possible eviction happen in the same call). Never set in
+// production — debug.ts wires it exclusively under isDev().
+let cacheDebugListener: (() => void) | null = null
+export function setCacheDebugListener(listener: (() => void) | null): void {
+	cacheDebugListener = listener
+}
+
 // Path traversal guard: the resolved path must be inside SAVES_ROOT.
 function isInsideSavesRoot(p: string): boolean {
 	const resolved = path.resolve(p)
@@ -121,6 +129,7 @@ export async function parseFullSave(savePath: string): Promise<Result<SaveData, 
 	}
 
 	cache.set(savePath, { mtimeMs: stats.mtimeMs, data: result.value })
+	cacheDebugListener?.()
 	return ok(result.value)
 }
 
@@ -148,6 +157,27 @@ export function watchSaveFile(filePath: string, onChange: () => void, debounceMs
 	return () => {
 		if (timer) clearTimeout(timer)
 		watcher?.close()
+	}
+}
+
+// Dev-only introspection: summarize each cached save. Uses the cache's read-only
+// accessors, so LRU order is left untouched.
+export function getCacheDebugInfo(): DebugCache {
+	return {
+		max: cache.capacity,
+		size: cache.size,
+		entries: cache.entries().map(([savePath, { mtimeMs, data }]) => ({
+			path: savePath,
+			mtimeMs,
+			fileName: data.fileName,
+			folderName: data.folderName,
+			gameVersion: data.gameVersion,
+			mode: data.mode,
+			totalScience: data.totalScience,
+			experimentCount: data.experimentCount,
+			records: data.scienceRecords.length,
+			bodies: Object.keys(data.aggregations.perBody).length
+		}))
 	}
 }
 
