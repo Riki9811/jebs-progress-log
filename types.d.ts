@@ -114,7 +114,7 @@ interface Window {
 		settings: () => Promise<DebugSettings>
 		cache: () => Promise<DebugCache>
 		help: () => void
-		// Assign true/false in the console to toggle live change logging.
+		// Toggles live change logging.
 		listenSettingsEvents: boolean
 		listenCacheEvents: boolean
 	}

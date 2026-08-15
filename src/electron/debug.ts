@@ -3,13 +3,11 @@ import { getSettingsDebugInfo, subscribeSettingsDebug } from './preferences.js'
 import { getCacheDebugInfo, setCacheDebugListener } from './savesManager.js'
 import { ipcMainHandleDebug } from './util.js'
 
-// Dev-only IPC surface. main.ts calls this exclusively under isDev(), so in a
-// production build none of these channels are ever registered — an invoke from
-// a compromised renderer would simply reject on a missing handler.
+// Dev-only IPC surface: main registers these channels only under isDev(), so they
+// do not exist in a production build.
 //
-// Change notifications are bare pings ('settings' | 'cache'): the renderer
-// re-fetches through the query channels and diffs against its own snapshot,
-// keeping all presentation logic out of the main process.
+// Change notifications carry only the kind that mutated; the renderer re-fetches
+// and diffs, which keeps presentation logic out of the main process.
 export function registerDebugHandlers(win: BrowserWindow): void {
 	ipcMainHandleDebug('debug:getSettings', getSettingsDebugInfo)
 	ipcMainHandleDebug('debug:getCache', getCacheDebugInfo)

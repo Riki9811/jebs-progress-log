@@ -7,8 +7,8 @@ export { STANDARD_SITUATIONS, RECOVERY_SITUATIONS, ALL_SITUATIONS, SITUATIONS_DE
 export { CELESTIAL_BODIES, BODY_NAMES } from './celestialBodies.js'
 export { ACTIVITIES, DEPLOYED_EXPERIMENTS, ACTIVITY_NAMES, DEPLOYED_EXPERIMENT_NAMES } from './experiments.js'
 
-// Data is already deep-frozen at definition time; the returned object references
-// the same immutable arrays — no copies are made.
+// Data is deep-frozen at definition time, so the returned object references the
+// same immutable arrays rather than copies.
 export function getReferenceData(): Result<ReferenceData, never> {
 	return ok({
 		bodies: CELESTIAL_BODIES,

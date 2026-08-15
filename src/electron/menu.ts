@@ -2,8 +2,7 @@ import { Menu, BrowserWindow, type MenuItemConstructorOptions } from 'electron'
 import { getBootPreferences, setPreference } from './preferences.js'
 import { ipcWebContentsSend, isDev } from './util.js'
 
-// Applies a checkbox-menu toggle: persist the preference and push the patch to the
-// renderer so its live state follows the menu.
+// Persists a menu toggle and pushes it to the renderer so both stay in sync.
 function apply(win: BrowserWindow, patch: Partial<Preferences>) {
 	setPreference(patch)
 	ipcWebContentsSend('settingsChanged', win.webContents, patch)

@@ -9,8 +9,8 @@ export type SaveDataLoad =
 	| { status: 'loaded'; value: SaveData }
 	| { status: 'error' }
 
-// Read side: the selected save's summary (available instantly on click), its
-// full data (async), the static reference set, and which sidebar panel is shown.
+// Read side. `selected` is available instantly on click, while `data` resolves
+// asynchronously.
 export type SelectedSaveState = {
 	reference: ReferenceData | null
 	selected: SaveSummary | null

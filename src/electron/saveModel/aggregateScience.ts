@@ -42,7 +42,7 @@ export function buildAggregations(records: ScienceRecord[]): SaveAggregations {
 			rec.scienceCollected += record.collected
 			rec.perExperiment[record.experimentId] = record
 		} else {
-			// by exclusion: situation is a StandardSituation
+			// By exclusion the situation is a StandardSituation.
 			const sit = record.situation as StandardSituation
 			const target = DEPLOYED_SET.has(record.experimentId)
 				? body.deployedPerSituation

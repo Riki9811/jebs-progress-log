@@ -10,11 +10,11 @@ import ErrorProvider from './context/ErrorProvider'
 import SettingsProvider from './context/SettingsProvider'
 
 // Insert FontAwesome's CSS via the bundler instead of letting it inject a <style>
-// tag at runtime, so the stylesheet order is deterministic and under our control.
+// tag at runtime, which keeps the stylesheet order deterministic.
 config.autoAddCss = false
 
-// Dev-only console tools (window.debug.*). The guard is statically false in
-// production builds, so Vite drops both the branch and the imported module.
+// Console tools under window.debug.*. The guard is statically false in production
+// builds, so Vite drops both the branch and the imported module.
 if (import.meta.env.DEV) {
 	import('./debug/devConsole').then((m) => m.installDebugConsole())
 }

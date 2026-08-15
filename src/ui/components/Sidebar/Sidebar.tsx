@@ -12,8 +12,8 @@ function Sidebar({ children, initialWidth = 260, onWidthCommit }: Props) {
 	const ref = useRef<HTMLElement>(null)
 	const [width, setWidth] = useState(initialWidth)
 	const [dragging, setDragging] = useState(false)
-	// Latest width + commit callback, read in onUp (which closes over stale values)
-	// so the drag effect needn't depend on them and re-bind listeners mid-drag.
+	// onUp closes over stale values, so it reads both through refs; the drag effect
+	// then needs no dependency on them and never re-binds listeners mid-drag.
 	const widthRef = useRef(width)
 	const commitRef = useRef(onWidthCommit)
 	useEffect(() => {

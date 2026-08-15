@@ -37,6 +37,5 @@ app.on('ready', () => {
 	ipcMainHandle('setPreference', (patch) => setPreference(patch))
 	ipcMainHandleSync('getBootPreferences', () => getBootPreferences())
 
-	// Debug channels exist only in dev; never registered in production builds.
 	if (isDev()) registerDebugHandlers(mainWindow)
 })

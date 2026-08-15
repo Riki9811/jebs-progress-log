@@ -5,15 +5,14 @@ export type CellValue = { collected: number; total: number }
 
 type Props = CellValue
 
-// Compact numeric label: integers as-is, otherwise one decimal.
 function fmt(n: number): string {
 	const r = Math.round(n * 10) / 10
 	return Number.isInteger(r) ? String(r) : r.toFixed(1)
 }
 
-// A single value cell: shows collected/total and tints its background red→yellow→green
-// by fill ratio. The colour scale is owned by CSS (see module). Reusable in any table
-// where a value/max pair should read as a filled cell. total <= 0 renders empty.
+// Shows collected/total and tints its background red→yellow→green by fill ratio;
+// the colour scale itself lives in the CSS module. Suits any table cell backed by
+// a value/max pair. A total of 0 or less renders empty.
 function ValueCell({ collected, total }: Props) {
 	if (total <= 0) return <div className={styles.empty} />
 

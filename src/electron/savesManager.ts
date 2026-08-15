@@ -10,9 +10,8 @@ const SAVES_ROOT = path.resolve(KSP_INSTALL_DIR, 'saves')
 
 const cache = new LruCache<string, { mtimeMs: number; data: SaveData }>(16)
 
-// Dev-only hook: notified after any cache content change (parseFullSave is the
-// only writer; set + possible eviction happen in the same call). Never set in
-// production — debug.ts wires it exclusively under isDev().
+// Notified after any cache content change. parseFullSave is the only writer, and
+// its set plus any eviction happen in the same call. Only wired up in dev.
 let cacheDebugListener: (() => void) | null = null
 export function setCacheDebugListener(listener: (() => void) | null): void {
 	cacheDebugListener = listener
@@ -55,8 +54,7 @@ export async function getSaveFolders(): Promise<Result<SaveFolder[], FolderAcces
 	const candidates = r.value
 		.filter((it) => it.isDirectory() && !UNWANTED_FOLDERS.includes(it.name))
 		.map((it) => ({ name: it.name, path: path.join(SAVES_ROOT, it.name) }))
-	// Only surface folders that look like real saves — i.e. contain persistent.sfs.
-	// Checks run in parallel to avoid serializing I/O across N folders.
+	// Only folders containing persistent.sfs count as real saves.
 	const checks = await Promise.all(
 		candidates.map(async (c) => {
 			try {
@@ -160,8 +158,8 @@ export function watchSaveFile(filePath: string, onChange: () => void, debounceMs
 	}
 }
 
-// Dev-only introspection: summarize each cached save. Uses the cache's read-only
-// accessors, so LRU order is left untouched.
+// Summarizes each cached save through the cache's read-only accessors, leaving
+// LRU order untouched.
 export function getCacheDebugInfo(): DebugCache {
 	return {
 		max: cache.capacity,

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { SettingsContext } from './SettingsContext'
 
-// Mirrors the store defaults; only used if the preload global is somehow absent.
+// Fallback for a missing preload global; mirrors the main-process store defaults.
 const DEFAULTS: Preferences = {
 	theme: 'system',
 	sidebarVisible: true,
@@ -10,17 +10,17 @@ const DEFAULTS: Preferences = {
 }
 
 function SettingsProvider({ children }: { children: ReactNode }) {
-	// Seeded synchronously from the boot preferences the preload injected — no flash.
+	// Seeded synchronously from the preload's boot preferences, so nothing flashes.
 	const [settings, setSettings] = useState<Preferences>(() => window.bootPreferences ?? DEFAULTS)
 
-	// Menu-driven toggles arrive from main already persisted; just merge them in.
+	// Menu toggles arrive from main already persisted, so they only need merging.
 	useEffect(() => {
 		return window.electron.subscribeSettingsChanged((patch) => {
 			setSettings((prev) => ({ ...prev, ...patch }))
 		})
 	}, [])
 
-	// Renderer-originated changes (e.g. resizing the sidebar): update and persist.
+	// Renderer-originated changes, e.g. a sidebar resize.
 	const update = useCallback((patch: Partial<Preferences>) => {
 		setSettings((prev) => ({ ...prev, ...patch }))
 		window.electron.setPreference(patch)

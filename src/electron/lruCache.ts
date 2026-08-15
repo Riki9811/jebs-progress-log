@@ -22,8 +22,7 @@ export class LruCache<K, V> {
 		}
 	}
 
-	// Read-only introspection (debug tooling). Unlike `get`, none of these
-	// refresh LRU order.
+	// Read-only introspection. Unlike `get`, these do not refresh LRU order.
 	get size(): number {
 		return this.map.size
 	}

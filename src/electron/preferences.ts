@@ -5,8 +5,8 @@ const store = new Store<Preferences>({
 	defaults: { theme: 'system', sidebarVisible: true, sidebarWidth: 260, tableFit: 'scroll' }
 })
 
-// The whole preference set, read synchronously so the renderer can apply it
-// before first paint (no flash of default sidebar/theme/layout).
+// Read synchronously: the renderer applies these before first paint, so no
+// default theme/sidebar/layout ever flashes.
 export function getBootPreferences(): Preferences {
 	return store.store
 }
@@ -15,13 +15,12 @@ export function getPreferences(): MainResult<'getPreferences'> {
 	return ok(store.store)
 }
 
-// Dev-only introspection: the persisted store plus the path of its backing file.
 export function getSettingsDebugInfo(): DebugSettings {
 	return { ...store.store, path: store.path }
 }
 
-// Dev-only: fires on any persisted change, whatever the origin (renderer update
-// or menu toggle) — store.set is the single funnel for all writes.
+// Fires on every persisted change regardless of origin: store.set is the single
+// funnel for all writes.
 export function subscribeSettingsDebug(listener: () => void): void {
 	store.onDidAnyChange(listener)
 }

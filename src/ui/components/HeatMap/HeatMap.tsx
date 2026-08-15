@@ -18,9 +18,9 @@ type Props = {
 }
 
 // Generic value matrix: row headers down the left, column headers across the top,
-// a ValueCell at each populated intersection. Knows nothing about the domain —
-// feed it any rows/columns/getCell. Wrap in a scroll container; the header row and
-// first column stay sticky.
+// a ValueCell at each populated intersection. Domain-agnostic — any rows/columns/
+// getCell triple works. The header row and first column stay sticky within an
+// enclosing scroll container.
 function HeatMap({ rows, columns, getCell, cornerLabel, fit = 'scroll' }: Props) {
 	return (
 		<table className={clsx(styles.table, fit === 'shrink' && styles.shrink)}>

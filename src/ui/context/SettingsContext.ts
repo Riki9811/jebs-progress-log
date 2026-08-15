@@ -2,7 +2,7 @@ import { createContext } from 'react'
 
 export type SettingsContextValue = {
 	settings: Preferences
-	// Update one or more preferences from the renderer: applied locally and persisted.
+	// Applies a preference patch locally and persists it.
 	update: (patch: Partial<Preferences>) => void
 }
 

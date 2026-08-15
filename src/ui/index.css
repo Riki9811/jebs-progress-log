@@ -22,9 +22,9 @@
 	--accentSoft: rgba(72, 127, 214, 0.15);
 
 	/* Value-cell fill scale (full / half / empty) — shared between themes */
-	--fillHigh: #3fae5a;
-	--fillMid: #e8c23d;
-	--fillLow: #dc5146;
+	--fillHigh: #3ccb60;
+	--fillMid: #eac02a;
+	--fillLow: #db453a;
 
 	/* Dark palette */
 	--darkBg: #1a1f26; /* main canvas (editor area) */

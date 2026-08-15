@@ -29,9 +29,9 @@ function FileExplorer({ folders }: Props) {
 	const [entries, setEntries] = useState<Record<string, FolderEntry>>({})
 	const { setError } = useError()
 
-	// Push a folder's failure to the footer as a single overwriting message. A
-	// whole-folder failure reports its code; a partial load reports the names of
-	// every failed file accumulated into one string. A clean load reports nothing.
+	// Pushes a folder's failure to the footer as one overwriting message: the error
+	// code for a whole-folder failure, the failed file names for a partial load,
+	// nothing at all for a clean one.
 	function reportError(name: string, load: FolderLoad) {
 		if (load.status === 'error') {
 			setError(`${name}: ${load.code}`)

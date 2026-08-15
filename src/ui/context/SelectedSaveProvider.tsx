@@ -38,9 +38,9 @@ function SelectedSaveProvider({ children }: { children: ReactNode }) {
 		}
 	}, [])
 
-	// Full data for the current selection. The BE mtime-cache makes this near
-	// instant for saves already listed; tagging by path drops stale responses
-	// from rapid selection changes.
+	// Full data for the current selection. The main-process mtime cache makes this
+	// near instant for saves already listed, and tagging by path drops stale
+	// responses from rapid selection changes.
 	useEffect(() => {
 		if (!selected) return
 		let active = true

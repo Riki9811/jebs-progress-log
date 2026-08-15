@@ -1,13 +1,10 @@
-// Dev-only DevTools console API. Imported dynamically from main.tsx behind
-// import.meta.env.DEV, so this module never reaches the production bundle. It
-// talks to the main process through the dev-only electronDebug preload bridge;
-// both sides of that bridge exist only when NODE_ENV=dev.
+// DevTools console API, imported dynamically from main.tsx behind
+// import.meta.env.DEV so it never reaches the production bundle. State comes from
+// the electronDebug preload bridge, which only exists when NODE_ENV=dev.
 //
-// Live events: main pushes a bare ping when settings or cache mutate; this
-// module re-fetches the state, diffs it against its last snapshot and prints
-// only the delta. Toggle with `debug.listenSettingsEvents = true` (and the
-// cache twin). Manual debug.settings()/debug.cache() calls refresh the
-// snapshot too, so the next diff is always against what you last saw.
+// On a change ping from main, the current state is re-fetched and diffed against
+// the last snapshot so only the delta is printed. Manual settings()/cache() calls
+// refresh that snapshot as well.
 
 type Prefs = Omit<DebugSettings, 'path'>
 
@@ -20,7 +17,7 @@ function printSettingsDiff(prev: DebugSettings, next: DebugSettings): void {
 
 	const summary = changed.map((k) => `${k}: ${prev[k]} → ${next[k]}`).join(', ')
 	console.log(`[debug] settings changed — ${summary}`)
-	// Full table for context: changed rows carry the arrow, others the plain value.
+	// Changed rows carry the arrow, unchanged ones the plain value.
 	const table: Record<string, { value: string }> = {}
 	for (const k of keys) {
 		table[k] = { value: changed.includes(k) ? `${prev[k]} → ${next[k]}` : String(next[k]) }

@@ -172,7 +172,7 @@ describe('extractSaveData', () => {
 		expect(kerbin).toBeDefined()
 		if (!kerbin) return
 
-		// activity standard → perSituation
+		// standard activity → perSituation
 		expect(kerbin.perSituation.SrfLanded?.biomes.Shores?.perExperiment.crewReport).toBeDefined()
 
 		// recovery records → recoveries
